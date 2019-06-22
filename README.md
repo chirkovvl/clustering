@@ -1,5 +1,5 @@
 # clustering
-Simple web application clustering example
+A simple web application demonstrating clustering points
 ## How to start
 Before you begin you must have pipenv installed
 ```bash
