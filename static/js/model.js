@@ -50,7 +50,7 @@
                 
                 _error: function(message) {
                     
-                    console.log(message);
+                    alert(message);
                 },
 
                 _generate: function() {
