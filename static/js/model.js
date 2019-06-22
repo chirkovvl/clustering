@@ -31,7 +31,7 @@
                                         <button id="gbutton" class="btn btn-primary btn-block">Сгенерировать</button>
                                     </div>
                                     <div class="col">
-                                        <input id="npoints" type="text" class="form-control">
+                                        <input id="npoints" type="text" placeholder="Число точек" class="form-control">
                                     </div>
                                     <div class="col">
                                         <button id="cbutton" class="btn btn-success btn-block">Кластеризовать</button>

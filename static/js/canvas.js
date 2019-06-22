@@ -51,7 +51,7 @@
                 
                 _error: function(message) {
                     
-                    alert("Error: " + message);
+                    alert("Внимание: " + message);
                     
                 },
 
@@ -152,7 +152,7 @@
                         });
                     }
                     else {
-                        self._error("Поле количества точек пусто");
+                        self._error("Не указано число точек");
                     }                       
                 },
                 
