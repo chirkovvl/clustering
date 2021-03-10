@@ -10,7 +10,7 @@
     top: 0;
     width: 30%;
     height: 100%;
-    background: #398;
+    background: rgb(199, 89, 15);
     transition: 0.5s;
     z-index: 1;
     display: flex;
@@ -26,7 +26,7 @@
 }
 
 .toggle-menu .toggle-button {
-    transform: translateX(100%);
+    transform: translate(100%, -50%);
     border-radius: 0 5px 5px 0;
 }
 
@@ -38,6 +38,7 @@
     position: absolute;
     right: 0px;
     top: 50%;
+    transform: translate(0, -50%);
     padding: 16px 4px 16px 4px;
     background: #fff;
     border-radius: 5px 0 0 5px;
@@ -46,7 +47,9 @@
 }
 
 .control {
-    padding: 10px;
+    padding: 15px;
+    border-radius: 5px;
+    border-style: none;
 }
 
 .content {
@@ -55,10 +58,6 @@
     top: 0;
     height: 100%;
     width: 70%;
-    background: rgb(219, 137, 14);
     transition: 0.5s;
     z-index: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
