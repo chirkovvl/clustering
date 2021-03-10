@@ -1,41 +1,38 @@
 import React, { useRef, useEffect } from "react";
 
-function draw(canvas, scaleX, scaleY) {
+function draw(canvas) {
     const ctx = canvas.getContext("2d");
 
-    let width = canvas.clientWidth;
-    let height = canvas.clientHeight;
+    function mainloop(time) {
+        let width = canvas.width;
+        let height = canvas.height;
 
-    ctx.scale(scaleX, scaleY);
+        if (width !== canvas.clientWidth || height !== canvas.clientHeight) {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+        }
 
-    ctx.fillStyle = "#ddd";
-    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+        ctx.fillStyle = "#ddd";
+        ctx.fillRect(0, 0, width, height);
 
-    ctx.fillStyle = "#f3223f";
-    ctx.beginPath();
-    ctx.arc(width / 2, height / 2, 15, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fill();
+        ctx.fillStyle = "#f3223f";
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, 15, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
+
+        requestAnimationFrame(mainloop);
+    }
+
+    requestAnimationFrame(mainloop);
 }
 
 function Canvas() {
     const canvas = useRef(null);
 
-    const resized = () => {
-        canvas.current.width = canvas.current.clientWidth;
-        canvas.current.height = canvas.current.clientHeight;
-    };
-
     useEffect(() => {
-        resized();
         draw(canvas.current);
-    });
-
-    // useEffect(() => {
-    //     canvas.current.onresize = resized;
-    //     console.log(canvas);
-    //     return () => canvas.current.removeEventListener("resize", resized);
-    // }, []);
+    }, []);
 
     return (
         <div className="content">
