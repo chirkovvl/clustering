@@ -21,8 +21,8 @@ function draw(canvas, points) {
         for (let point of points) {
             drawPoint(
                 ctx,
-                (point.x * width) / canvas.clientWidth,
-                (point.y * height) / canvas.clientHeight
+                (point.x * canvas.clientWidth) / width,
+                (point.y * canvas.clientHeight) / height
             );
         }
         ctx.fill();
@@ -41,14 +41,14 @@ function drawPoint(ctx, x, y) {
 function Canvas(props) {
     const canvas = useRef(null);
 
+    Canvas.width = () => canvas.current.width;
+    Canvas.height = () => canvas.current.height;
+
     let points = props.points;
 
     useEffect(() => {
         draw(canvas.current, points);
     }, [points]);
-
-    Canvas.width = () => canvas.current.width;
-    Canvas.height = () => canvas.current.height;
 
     return (
         <div className="content">
