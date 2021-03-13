@@ -1,7 +1,6 @@
 .wrapper {
     position: relative;
     height: 100vh;
-    background: #ddd;
 }
 
 .menu {
@@ -10,7 +9,7 @@
     top: 0;
     width: 30%;
     height: 100%;
-    background: rgb(199, 89, 15);
+    background: linear-gradient(45deg, #13547a, #80d0c7);
     transition: 0.5s;
     z-index: 1;
     display: flex;
@@ -50,6 +49,18 @@
     padding: 15px;
     border-radius: 5px;
     border-style: none;
+}
+
+.control:focus {
+    outline: none;
+    box-shadow: 0 0 2pt 0.5pt rgb(0, 0, 0);
+}
+
+.danger {
+    color: red;
+    font-size: 0.8em;
+    margin-top: -10px;
+    transition: 0.5s;
 }
 
 .content {

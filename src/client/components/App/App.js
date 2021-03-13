@@ -1,13 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import Menu from "./Menu/Menu";
 import Canvas from "./Canvas/Canvas";
 import "./App.css";
 
+async function apiRequest(path, data = {}) {
+    const response = await fetch(path, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+        return await response.json();
+    } else {
+        console.log(`Error request to ${path}`);
+    }
+}
+
 function App() {
+    const [points, setPoints] = useState([]);
+
+    const fetchPoints = (numberPoints) => {
+        const data = {
+            numberPoints: numberPoints,
+            canvasWidth: 600,
+            canvasHeight: 600,
+            pointSize: 5,
+        };
+
+        apiRequest("/api/generate_points", data).then((points) => {
+            setPoints(points);
+        });
+    };
+
     return (
         <div className="wrapper">
-            <Menu />
-            <Canvas />
+            <Menu generate={fetchPoints} />
+            <Canvas points={points} />
         </div>
     );
 }

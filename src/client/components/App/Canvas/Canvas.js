@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from "react";
 
-function draw(canvas) {
+function draw(canvas, points) {
     const ctx = canvas.getContext("2d");
 
-    function mainloop(time) {
+    function drawloop(time) {
         let width = canvas.width;
         let height = canvas.height;
 
@@ -12,27 +12,36 @@ function draw(canvas) {
             canvas.height = canvas.clientHeight;
         }
 
+        ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = "#ddd";
         ctx.fillRect(0, 0, width, height);
 
-        ctx.fillStyle = "#f3223f";
-        ctx.beginPath();
-        ctx.arc(width / 2, height / 2, 15, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.fill();
+        points.forEach((point) => {
+            drawPoint(ctx, point.x, point.y);
+        });
 
-        requestAnimationFrame(mainloop);
+        requestAnimationFrame(drawloop);
     }
 
-    requestAnimationFrame(mainloop);
+    drawloop();
 }
 
-function Canvas() {
+function drawPoint(ctx, x, y) {
+    ctx.fillStyle = "#f3223f";
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function Canvas(props) {
     const canvas = useRef(null);
 
+    let points = props.points;
+
     useEffect(() => {
-        draw(canvas.current);
-    }, []);
+        draw(canvas.current, points);
+    }, [points]);
 
     return (
         <div className="content">

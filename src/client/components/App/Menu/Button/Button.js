@@ -1,7 +1,11 @@
 import React from "react";
 
-function Button({ children }) {
-    return <button className="control">{children}</button>;
+function Button({ children, onClick }) {
+    return (
+        <button onClick={onClick} className="control">
+            {children}
+        </button>
+    );
 }
 
 export default Button;
