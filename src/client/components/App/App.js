@@ -25,8 +25,8 @@ function App() {
     const fetchPoints = (numberPoints) => {
         const data = {
             numberPoints: numberPoints,
-            canvasWidth: 600,
-            canvasHeight: 600,
+            canvasWidth: Canvas.width(),
+            canvasHeight: Canvas.height(),
             pointSize: 5,
         };
 
