@@ -13,7 +13,10 @@ function draw(canvas, points) {
             canvas.height = canvas.clientHeight;
         }
 
-        ctx.clearRect(0, 0, width, height);
+        // Очищаем и заполняем канву
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#ddd";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Рисуем точки
         ctx.fillStyle = "#f3223f";
@@ -52,10 +55,7 @@ function Canvas(props) {
 
     return (
         <div className="content">
-            <canvas
-                ref={canvas}
-                style={{ width: "100%", height: "100%", background: "#ddd" }}
-            >
+            <canvas ref={canvas} style={{ width: "100%", height: "100%" }}>
                 <p>Ваш баузер не поддерживает canvas</p>
             </canvas>
         </div>

@@ -15,11 +15,11 @@ function Menu(props) {
     const generatePointsHandler = () => {
         let value = +inputNumber.current.value;
 
-        if (value) {
+        if (value && value <= 2000) {
             props.generate(value);
             setErrorContent("");
         } else {
-            setErrorContent("Заполните поле > 0");
+            setErrorContent("Заполните поле. (диапазон от 0 до 2000)");
         }
     };
 
@@ -29,6 +29,7 @@ function Menu(props) {
             <InputNumber
                 element={inputNumber}
                 min="0"
+                max="2000"
                 placeholder="Введите количество точек"
                 errorContent={errorContent}
             />
