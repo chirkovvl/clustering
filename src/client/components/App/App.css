@@ -9,7 +9,7 @@
     top: 0;
     width: 30%;
     height: 100%;
-    background: linear-gradient(45deg, #13547a, #80d0c7);
+    background: #4b4453;
     transition: 0.5s;
     z-index: 1;
     display: flex;

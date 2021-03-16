@@ -15,11 +15,11 @@ function draw(canvas, points) {
 
         // Очищаем и заполняем канву
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle = "#B0A8B9";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Рисуем точки
-        ctx.fillStyle = "#f3223f";
+        ctx.fillStyle = "#C34A36";
         ctx.beginPath();
         for (let point of points) {
             drawPoint(

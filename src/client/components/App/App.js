@@ -15,7 +15,8 @@ async function apiRequest(path, data = {}) {
     if (response.ok) {
         return await response.json();
     } else {
-        console.log(`Error request to ${path}`);
+        alert("Проблемы с сервером");
+        throw new Error(`Error request to ${path}`);
     }
 }
 
