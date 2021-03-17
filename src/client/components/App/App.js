@@ -26,9 +26,9 @@ function App() {
     const fetchPoints = (numberPoints) => {
         const data = {
             numberPoints: numberPoints,
-            canvasWidth: Canvas.width(),
-            canvasHeight: Canvas.height(),
-            pointSize: 5,
+            canvasWidth: Canvas.getWidth(),
+            canvasHeight: Canvas.getHeight(),
+            pointSize: Canvas.getPointSize(),
         };
 
         apiRequest("/api/generate_points", data).then((points) => {

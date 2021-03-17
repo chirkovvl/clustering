@@ -1,6 +1,20 @@
 import React, { useRef, useEffect } from "react";
 
 const END_ANGLE = Math.PI * 2;
+const pointSize = 5;
+
+window.requestAnimFrame = (function () {
+    return (
+        window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback) {
+            window.setTimeout(callback, 1000 / 60);
+        }
+    );
+})();
 
 function draw(canvas, points) {
     const ctx = canvas.getContext("2d");
@@ -30,7 +44,7 @@ function draw(canvas, points) {
         }
         ctx.fill();
 
-        requestAnimationFrame(drawloop);
+        requestAnimFrame(drawloop);
     }
 
     drawloop();
@@ -38,16 +52,16 @@ function draw(canvas, points) {
 
 function drawPoint(ctx, x, y) {
     ctx.moveTo(x, y);
-    ctx.arc(x, y, 5, 0, END_ANGLE, true);
+    ctx.arc(x, y, pointSize, 0, END_ANGLE, true);
 }
 
 function Canvas(props) {
     const canvas = useRef(null);
-
-    Canvas.width = () => canvas.current.width;
-    Canvas.height = () => canvas.current.height;
-
     let points = props.points;
+
+    Canvas.getWidth = () => canvas.current.width;
+    Canvas.getHeight = () => canvas.current.height;
+    Canvas.getPointSize = () => pointSize;
 
     useEffect(() => {
         draw(canvas.current, points);
