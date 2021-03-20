@@ -34,26 +34,30 @@ function draw(canvas, points) {
 
         // Рисуем точки
         if (points.length) {
-            ctx.fillStyle = "#C34A36";
-            ctx.beginPath();
             for (let point of points) {
                 let x = (point.x * canvas.clientWidth) / width;
                 let y = (point.y * canvas.clientHeight) / height;
                 let radius = pointSize;
 
-                if (point.selected) radius *= 2;
+                ctx.fillStyle = "#C34A36";
+                ctx.beginPath();
+
+                if (point.selected) {
+                    radius *= 2;
+                    ctx.fillStyle = point.color;
+                }
 
                 ctx.moveTo(x, y);
                 ctx.arc(x, y, radius, 0, END_ANGLE, true);
 
                 point.x = x;
                 point.y = y;
+
+                ctx.fill();
             }
 
             width = canvas.clientWidth;
             height = canvas.clientHeight;
-
-            ctx.fill();
         }
 
         requestAnimFrame(drawloop);
@@ -73,6 +77,14 @@ function getDistanceBetween(fromX, fromY, toX, toY) {
     return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
 }
 
+function getRandomHexColor() {
+    let max = 16777215;
+    let min = 0;
+
+    let decNumber = Math.floor(min - 0.5 + Math.random() * (max - min + 1));
+    return "#" + decNumber.toString(16);
+}
+
 function Canvas(props) {
     const canvas = useRef(null);
     let points = props.points;
@@ -90,6 +102,7 @@ function Canvas(props) {
             if (distance < pointSize + 2) {
                 if (!points[i].selected) {
                     points[i].selected = true;
+                    points[i].color = getRandomHexColor();
                 }
             }
         }
