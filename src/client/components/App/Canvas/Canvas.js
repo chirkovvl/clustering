@@ -33,20 +33,28 @@ function draw(canvas, points) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Рисуем точки
-        ctx.fillStyle = "#C34A36";
-        ctx.beginPath();
-        for (let point of points) {
-            let x = (point.x * canvas.clientWidth) / width;
-            let y = (point.y * canvas.clientHeight) / height;
-            let radius = pointSize;
+        if (points.length) {
+            ctx.fillStyle = "#C34A36";
+            ctx.beginPath();
+            for (let point of points) {
+                let x = (point.x * canvas.clientWidth) / width;
+                let y = (point.y * canvas.clientHeight) / height;
+                let radius = pointSize;
 
-            if (point.selected) radius *= 2;
+                if (point.selected) radius *= 2;
 
-            ctx.moveTo(x, y);
-            ctx.arc(x, y, radius, 0, END_ANGLE, true);
+                ctx.moveTo(x, y);
+                ctx.arc(x, y, radius, 0, END_ANGLE, true);
+
+                point.x = x;
+                point.y = y;
+            }
+
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+
+            ctx.fill();
         }
-
-        ctx.fill();
 
         requestAnimFrame(drawloop);
     }
@@ -82,7 +90,6 @@ function Canvas(props) {
             if (distance < pointSize + 2) {
                 if (!points[i].selected) {
                     points[i].selected = true;
-                    draw(e.target, points);
                 }
             }
         }
