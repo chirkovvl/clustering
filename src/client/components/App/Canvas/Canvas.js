@@ -36,12 +36,16 @@ function draw(canvas, points) {
         ctx.fillStyle = "#C34A36";
         ctx.beginPath();
         for (let point of points) {
-            drawPoint(
-                ctx,
-                (point.x * canvas.clientWidth) / width,
-                (point.y * canvas.clientHeight) / height
-            );
+            let x = (point.x * canvas.clientWidth) / width;
+            let y = (point.y * canvas.clientHeight) / height;
+            let radius = pointSize;
+
+            if (point.selected) radius *= 2;
+
+            ctx.moveTo(x, y);
+            ctx.arc(x, y, radius, 0, END_ANGLE, true);
         }
+
         ctx.fill();
 
         requestAnimFrame(drawloop);
@@ -50,9 +54,15 @@ function draw(canvas, points) {
     drawloop();
 }
 
-function drawPoint(ctx, x, y) {
-    ctx.moveTo(x, y);
-    ctx.arc(x, y, pointSize, 0, END_ANGLE, true);
+function convertToCanvasSize(canvas, currentX, currentY) {
+    let x = currentX - (window.innerWidth - canvas.clientWidth);
+    let y = currentY - (window.innerHeight - canvas.clientHeight);
+
+    return [x, y];
+}
+
+function getDistanceBetween(fromX, fromY, toX, toY) {
+    return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
 }
 
 function Canvas(props) {
@@ -62,6 +72,26 @@ function Canvas(props) {
     Canvas.getWidth = () => canvas.current.width;
     Canvas.getHeight = () => canvas.current.height;
     Canvas.getPointSize = () => pointSize;
+
+    const clickHandler = (e) => {
+        let [x, y] = convertToCanvasSize(e.target, e.clientX, e.clientY);
+
+        for (let i = points.length - 1; i >= 0; i--) {
+            let distance = getDistanceBetween(x, y, points[i].x, points[i].y);
+
+            if (distance < pointSize + 2) {
+                if (!points[i].selected) {
+                    points[i].selected = true;
+                    draw(e.target, points);
+                }
+            }
+        }
+    };
+
+    useEffect(() => {
+        canvas.current.addEventListener("click", clickHandler);
+        return () => canvas.current.removeEventListener("click", clickHandler);
+    });
 
     useEffect(() => {
         draw(canvas.current, points);
