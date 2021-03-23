@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
+const pointColor = "#C34A36";
 
 window.requestAnimFrame = (function () {
     return (
@@ -34,30 +35,39 @@ function draw(canvas, points) {
 
         // Рисуем точки
         if (points.length) {
+            ctx.fillStyle = pointColor;
+            ctx.beginPath();
+
             for (let point of points) {
                 let x = (point.x * canvas.clientWidth) / width;
                 let y = (point.y * canvas.clientHeight) / height;
                 let radius = pointSize;
 
-                ctx.fillStyle = "#C34A36";
-                ctx.beginPath();
-
                 if (point.selected) {
                     radius *= 2;
+                    ctx.closePath();
+                    ctx.fill();
                     ctx.fillStyle = point.color;
+                    ctx.beginPath();
                 }
 
                 ctx.moveTo(x, y);
                 ctx.arc(x, y, radius, 0, END_ANGLE, true);
 
+                if (point.selected) {
+                    ctx.fill();
+                    ctx.fillStyle = pointColor;
+                    ctx.beginPath();
+                }
+
                 point.x = x;
                 point.y = y;
-
-                ctx.fill();
             }
 
             width = canvas.clientWidth;
             height = canvas.clientHeight;
+
+            ctx.fill();
         }
 
         requestAnimFrame(drawloop);
