@@ -31,14 +31,34 @@ function App() {
             pointSize: Canvas.getPointSize(),
         };
 
-        apiRequest("/api/generate_points", data).then((points) => {
+        apiRequest("/api/generate", data).then((points) => {
             setPoints(points);
         });
     };
 
+    const fetchClusteringData = () => {
+        const centersGravity = Canvas.getCentersGravity();
+
+        if (!centersGravity.length) {
+            alert("Отсутсуют центры гравитации");
+            return;
+        }
+
+        const data = {
+            points: points,
+            centersGravity: centersGravity,
+        };
+
+        console.log(data);
+
+        // apiRequest("/api/clustering", data).then((clusteringData) => {
+        //     console.log(clusteringData);
+        // });
+    };
+
     return (
         <div className="wrapper">
-            <Menu generate={fetchPoints} />
+            <Menu generate={fetchPoints} clustering={fetchClusteringData} />
             <Canvas points={points} />
         </div>
     );

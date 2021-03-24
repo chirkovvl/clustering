@@ -10,7 +10,7 @@ http.createServer(router.requestHandler.bind(router)).listen(port, host, () =>
     console.log(`Server started on ${host}:${port}`)
 );
 
-router.to("/api/generate_points", (req, res) => {
+router.to("/api/generate", (req, res) => {
     if (req.method == "POST") {
         let body = "";
 

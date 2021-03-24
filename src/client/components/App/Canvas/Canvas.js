@@ -117,6 +117,7 @@ function Canvas(props) {
     Canvas.getWidth = () => canvas.current.width;
     Canvas.getHeight = () => canvas.current.height;
     Canvas.getPointSize = () => pointSize;
+    Canvas.getCentersGravity = () => centersGravity;
 
     const clickHandler = (e) => {
         let [x, y] = convertToCanvasSize(e.target, e.clientX, e.clientY);

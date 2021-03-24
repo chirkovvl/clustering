@@ -19,7 +19,7 @@ function Menu(props) {
             props.generate(value);
             setErrorContent("");
         } else {
-            setErrorContent("Заполните поле. (диапазон от 0 до 2000)");
+            setErrorContent("Заполните поле. (диапазон от 1 до 2000)");
         }
     };
 
@@ -34,7 +34,7 @@ function Menu(props) {
                 errorContent={errorContent}
             />
             <Button onClick={generatePointsHandler}>Сгенерировать точки</Button>
-            <Button>Кластеризовать точки</Button>
+            <Button onClick={props.clustering}>Кластеризовать точки</Button>
         </div>
     );
 }
