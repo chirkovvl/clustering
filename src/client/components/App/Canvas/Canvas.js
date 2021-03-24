@@ -95,9 +95,24 @@ function getRandomHexColor() {
     return "#" + decNumber.toString(16);
 }
 
+function chooseCenterGravity(points, x, y) {
+    for (let i = points.length - 1; i >= 0; i--) {
+        let distance = getDistanceBetween(x, y, points[i].x, points[i].y);
+
+        if (distance < pointSize + 2) {
+            if (!points[i].selected) {
+                points[i].selected = true;
+                points[i].color = getRandomHexColor();
+                return points[i];
+            }
+        }
+    }
+}
+
 function Canvas(props) {
     const canvas = useRef(null);
     let points = props.points;
+    let centersGravity = [];
 
     Canvas.getWidth = () => canvas.current.width;
     Canvas.getHeight = () => canvas.current.height;
@@ -105,17 +120,9 @@ function Canvas(props) {
 
     const clickHandler = (e) => {
         let [x, y] = convertToCanvasSize(e.target, e.clientX, e.clientY);
+        let centerGravity = chooseCenterGravity(points, x, y);
 
-        for (let i = points.length - 1; i >= 0; i--) {
-            let distance = getDistanceBetween(x, y, points[i].x, points[i].y);
-
-            if (distance < pointSize + 2) {
-                if (!points[i].selected) {
-                    points[i].selected = true;
-                    points[i].color = getRandomHexColor();
-                }
-            }
-        }
+        if (centerGravity) centersGravity.push(centerGravity);
     };
 
     useEffect(() => {
