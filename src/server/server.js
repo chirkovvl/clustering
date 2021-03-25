@@ -10,46 +10,28 @@ http.createServer(router.requestHandler.bind(router)).listen(port, host, () =>
     console.log(`Server started on ${host}:${port}`)
 );
 
-router.to("/api/generate", (req, res) => {
-    if (req.method == "POST") {
-        let body = "";
+router.post("/api/generate", (req, res) => {
+    let data = req.body;
+    let points = generatePoints(data);
 
-        req.on("data", (chunk) => {
-            body += chunk.toString();
-        });
-
-        req.on("end", () => {
-            let data = JSON.parse(body);
-            let points = generatePoints(data);
-
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json;charset=utf-8");
-            res.end(JSON.stringify(points));
-        });
-
-        function generatePoints(data) {
-            let { numberPoints, canvasWidth, canvasHeight, pointSize } = data;
-
-            let arrayPoints = [];
-
-            function getRandomNumber(min, max) {
-                return Math.floor(min - 0.5 + Math.random() * (max - min + 1));
-            }
-
-            while (numberPoints) {
-                const x = getRandomNumber(pointSize, canvasWidth - pointSize);
-                const y = getRandomNumber(pointSize, canvasHeight - pointSize);
-
-                arrayPoints.push({ x, y });
-                numberPoints--;
-            }
-
-            return arrayPoints;
-        }
-    }
-
-    if (req.method == "GET") {
-        res.setHeader("Content-Type", "text/plain;charset=utf-8");
-        res.end("Только POST");
-    }
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json;charset=utf-8");
+    res.end(JSON.stringify(points));
 });
+
+function generatePoints(data) {
+    let { numberPoints, width, height, pointSize } = data;
+    let arrayPoints = [];
+
+    while (numberPoints) {
+        const x = getRandomNumber(pointSize, width - pointSize);
+        const y = getRandomNumber(pointSize, height - pointSize);
+        arrayPoints.push({ x, y });
+        numberPoints--;
+    }
+    return arrayPoints;
+}
+
+function getRandomNumber(min, max) {
+    return Math.floor(min - 0.5 + Math.random() * (max - min + 1));
+}
