@@ -1,23 +1,25 @@
-const url = require("url");
-
 class Router {
     constructor() {
-        this.urlHandlers = new Map();
+        this.urlHandlers = {};
     }
 
     requestHandler(req, res) {
         this.response = res;
         this.request = req;
 
-        const pathname = url.parse(req.url).pathname;
+        this.url = new URL(req.url, `http://${req.headers.host}`);
+        let pathname = this.url.pathname;
 
-        if (this.urlHandlers.has(pathname)) {
-            let handler = this.urlHandlers.get(pathname);
+        if (pathname in this.urlHandlers) {
+            let handlers = this.urlHandlers[pathname];
+            if (req.method.toLowerCase() in handlers) {
+                let methodObject = handlers[req.method.toLowerCase()];
 
-            if (handler.method === req.method.toLowerCase()) {
-                handler.parseBody(req).then((body) => {
-                    req.body = body;
-                    handler.callback(req, res);
+                methodObject.parseBody(req).then((data) => {
+                    req.body = data;
+                    methodObject.callbacks.forEach((callback) =>
+                        callback(req, res)
+                    );
                 });
             } else {
                 this._error(
@@ -32,44 +34,79 @@ class Router {
 
     post(pathname, callback) {
         const parseBody = (req) => {
-            return new Promise((resolve, reject) => {
+            return this._promisify(pathname, req.method, () => {
                 let body = "";
-                try {
-                    req.on("data", (chunk) => {
-                        body += chunk.toString();
-                    });
 
-                    req.on("end", () => {
-                        resolve(body);
-                    });
-                } catch {
-                    reject(new Error(`Error parse body in ${pathname}`));
-                }
-            }).then((body) => {
-                console.info(`Recived data on ${pathname}: ${body}`);
-                return JSON.parse(body);
+                req.on("data", (chunk) => {
+                    body += chunk.toString();
+                });
+
+                return new Promise((resolve) => {
+                    req.on("end", () => resolve(body));
+                });
             });
         };
 
-        let handlerData = {
-            callback,
-            parseBody,
-            method: "post",
-        };
-        this.urlHandlers.set(pathname, handlerData);
+        if (this.urlHandlers[pathname] === undefined) {
+            this.urlHandlers[pathname] = {};
+        }
+
+        if (this.urlHandlers[pathname].post === undefined) {
+            this.urlHandlers[pathname].post = {
+                callbacks: [callback],
+                parseBody,
+            };
+        } else {
+            this.urlHandlers[pathname].post.callbacks.push(callback);
+        }
     }
 
     get(pathname, callback) {
         const parseBody = (req) => {
-            console.log("Парсим body для GET request");
+            return this._promisify(pathname, req.method, () => {
+                let requestParams = this.url.search;
+                let arrParams = requestParams.slice(1).split(/[?]|[&]/);
+                let body = {};
+                arrParams.forEach((param) => {
+                    let [key, value] = param.split("=");
+                    body[key] = value;
+                });
+                return JSON.stringify(body);
+            });
         };
 
-        let handlerData = {
-            callback,
-            parseBody,
-        };
+        if (this.urlHandlers[pathname] === undefined) {
+            this.urlHandlers[pathname] = {};
+        }
 
-        this.urlHandlers.set(pathname, handlerData);
+        if (this.urlHandlers[pathname].get === undefined) {
+            this.urlHandlers[pathname].get = {
+                callbacks: [callback],
+                parseBody,
+            };
+        } else {
+            this.urlHandlers[pathname].get.callbacks.push(callback);
+        }
+    }
+
+    _promisify(pathname, method, func) {
+        return new Promise((resolve, reject) => {
+            try {
+                let result = func();
+                resolve(result);
+            } catch {
+                reject(
+                    new Error(
+                        `Error parse body pathname: ${pathname} method: ${method}`
+                    )
+                );
+            }
+        }).then((result) => {
+            console.info(
+                `${method}: Recived data on ${pathname}\ndata: ${result}`
+            );
+            return JSON.parse(result);
+        });
     }
 
     _error(code, errorMessage) {
