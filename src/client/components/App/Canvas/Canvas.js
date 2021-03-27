@@ -130,7 +130,7 @@ function Canvas(props) {
     useEffect(() => {
         canvas.current.addEventListener("click", clickHandler);
         return () => canvas.current.removeEventListener("click", clickHandler);
-    }, []);
+    });
 
     useEffect(() => {
         draw(canvas.current, points);

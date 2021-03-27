@@ -16,7 +16,7 @@ async function apiRequest(path, data = {}) {
         return await response.json();
     } else {
         alert("Проблемы с сервером");
-        throw new Error(`Error request to ${path}`);
+        throw new Error(await response.text());
     }
 }
 
@@ -49,11 +49,9 @@ function App() {
             centersGravity: centersGravity,
         };
 
-        console.log(data);
-
-        // apiRequest("/api/clustering", data).then((clusteringData) => {
-        //     console.log(clusteringData);
-        // });
+        apiRequest("/api/clustering", data).then((clusteringData) => {
+            console.log(clusteringData);
+        });
     };
 
     return (

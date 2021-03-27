@@ -12,10 +12,21 @@ http.createServer(router.requestHandler.bind(router)).listen(port, host, () =>
 
 router.post("/api/generate", (req, res) => {
     let data = req.body;
-    let points = generatePoints(data);
+    const points = generatePoints(data);
 
     res.json(points);
 });
+
+router.post("/api/clustering", (req, res) => {
+    let data = req.body;
+    const result = clusteringData(data);
+
+    res.json(result);
+});
+
+function clusteringData(data) {
+    return { message: "Пока не реализовано" };
+}
 
 function generatePoints({ numberPoints, width, height, pointSize }) {
     let arrayPoints = [];
