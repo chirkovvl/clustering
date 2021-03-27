@@ -32,14 +32,14 @@ function generatePoints({ numberPoints, width, height, pointSize }) {
     let arrayPoints = [];
 
     while (numberPoints) {
-        const x = getRandomNumber(pointSize, width - pointSize);
-        const y = getRandomNumber(pointSize, height - pointSize);
+        const x = randomNumber(pointSize, width - pointSize);
+        const y = randomNumber(pointSize, height - pointSize);
         arrayPoints.push({ x, y });
         numberPoints--;
     }
     return arrayPoints;
 }
 
-function getRandomNumber(min, max) {
+function randomNumber(min, max) {
     return Math.floor(min - 0.5 + Math.random() * (max - min + 1));
 }

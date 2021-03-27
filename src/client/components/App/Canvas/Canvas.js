@@ -18,10 +18,17 @@ window.requestAnimFrame = (function () {
     );
 })();
 
-function draw(canvas, points) {
+function draw(canvas, points, centersGravity) {
     const ctx = canvas.getContext("2d");
     let width = canvas.width;
     let height = canvas.height;
+
+    const convertCoords = (pointX, pointY) => {
+        let x = Math.round((pointX * canvas.clientWidth) / width);
+        let y = Math.round((pointY * canvas.clientHeight) / height);
+
+        return [x, y];
+    };
 
     function drawloop(time) {
         if (width !== canvas.clientWidth || height !== canvas.clientHeight) {
@@ -40,36 +47,35 @@ function draw(canvas, points) {
             ctx.beginPath();
 
             for (let point of points) {
-                let x = (point.x * canvas.clientWidth) / width;
-                let y = (point.y * canvas.clientHeight) / height;
-                let radius = pointSize;
-
-                if (point.selected) {
-                    radius *= 2;
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.fillStyle = point.color;
-                    ctx.beginPath();
-                }
+                let [x, y] = convertCoords(point.x, point.y);
 
                 ctx.moveTo(x, y);
-                ctx.arc(x, y, radius, 0, END_ANGLE, true);
-
-                if (point.selected) {
-                    ctx.fill();
-                    ctx.fillStyle = pointColor;
-                    ctx.beginPath();
-                }
+                ctx.arc(x, y, pointSize, 0, END_ANGLE, true);
 
                 point.x = x;
                 point.y = y;
             }
 
-            width = canvas.clientWidth;
-            height = canvas.clientHeight;
-
             ctx.fill();
         }
+
+        // Рисуем центры гравитации
+        if (centersGravity.length) {
+            for (let center of centersGravity) {
+                let [x, y] = convertCoords(center.x, center.y);
+
+                ctx.fillStyle = center.color;
+                ctx.beginPath();
+                ctx.arc(x, y, pointSize * 2, 0, END_ANGLE, true);
+                ctx.fill();
+
+                center.x = x;
+                center.y = y;
+            }
+        }
+
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
 
         requestAnimFrame(drawloop);
     }
@@ -88,7 +94,7 @@ function getDistanceBetween(fromX, fromY, toX, toY) {
     return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
 }
 
-function getRandomHexColor() {
+function randomHexColor() {
     const max = 16777215;
     const min = 0;
 
@@ -101,11 +107,13 @@ function chooseCenterGravity(points, x, y) {
         let distance = getDistanceBetween(x, y, points[i].x, points[i].y);
 
         if (distance < pointSize + 2) {
-            if (!points[i].selected) {
-                points[i].selected = true;
-                points[i].color = getRandomHexColor();
-                return points[i];
-            }
+            let point = points[i];
+            points.splice(i, 1);
+            return {
+                x: point.x,
+                y: point.y,
+                color: randomHexColor(),
+            };
         }
     }
 }
@@ -133,7 +141,7 @@ function Canvas(props) {
     });
 
     useEffect(() => {
-        draw(canvas.current, points);
+        draw(canvas.current, points, centersGravity);
     }, [points]);
 
     return (
