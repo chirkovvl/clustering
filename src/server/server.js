@@ -14,17 +14,7 @@ router.post("/api/generate", (req, res) => {
     let data = req.body;
     let points = generatePoints(data);
 
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json;charset=utf-8");
-    res.end(JSON.stringify(points));
-});
-
-router.get("/api/generate", (req, res) => {
-    let data = req.body;
-
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json;charset=utf-8");
-    res.end(JSON.stringify(data));
+    res.json(points);
 });
 
 function generatePoints({ numberPoints, width, height, pointSize }) {

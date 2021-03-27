@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from "react";
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
 const pointColor = "#C34A36";
+const fillStyle = "#B0A8B9";
 
 window.requestAnimFrame = (function () {
     return (
@@ -30,7 +31,7 @@ function draw(canvas, points) {
 
         // Очищаем и заполняем канву
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#B0A8B9";
+        ctx.fillStyle = fillStyle;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Рисуем точки
@@ -88,8 +89,8 @@ function getDistanceBetween(fromX, fromY, toX, toY) {
 }
 
 function getRandomHexColor() {
-    let max = 16777215;
-    let min = 0;
+    const max = 16777215;
+    const min = 0;
 
     let decNumber = Math.floor(min - 0.5 + Math.random() * (max - min + 1));
     return "#" + decNumber.toString(16);
@@ -129,7 +130,7 @@ function Canvas(props) {
     useEffect(() => {
         canvas.current.addEventListener("click", clickHandler);
         return () => canvas.current.removeEventListener("click", clickHandler);
-    });
+    }, []);
 
     useEffect(() => {
         draw(canvas.current, points);

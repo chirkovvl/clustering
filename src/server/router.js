@@ -12,14 +12,13 @@ class Router {
 
         if (pathname in this.urlHandlers) {
             let handlers = this.urlHandlers[pathname];
-            if (req.method.toLowerCase() in handlers) {
-                let methodObject = handlers[req.method.toLowerCase()];
+            let method = req.method.toLowerCase();
 
-                methodObject.parseBody(req).then((data) => {
+            if (method in handlers) {
+                handlers[method].parseBody(req).then((data) => {
                     req.body = data;
-                    methodObject.callbacks.forEach((callback) =>
-                        callback(req, res)
-                    );
+                    res.json = this._json.bind(res);
+                    handlers[method].callback(req, res);
                 });
             } else {
                 this._error(
@@ -28,7 +27,7 @@ class Router {
                 );
             }
         } else {
-            this._error(404, "CLIENT ERROR: 404. Page not found.");
+            this._error(404, "CLIENT ERROR: 404. Resourse not found.");
         }
     }
 
@@ -47,18 +46,7 @@ class Router {
             });
         };
 
-        if (this.urlHandlers[pathname] === undefined) {
-            this.urlHandlers[pathname] = {};
-        }
-
-        if (this.urlHandlers[pathname].post === undefined) {
-            this.urlHandlers[pathname].post = {
-                callbacks: [callback],
-                parseBody,
-            };
-        } else {
-            this.urlHandlers[pathname].post.callbacks.push(callback);
-        }
+        this._saveCallback(pathname, callback, parseBody, "post");
     }
 
     get(pathname, callback) {
@@ -75,22 +63,34 @@ class Router {
             });
         };
 
-        if (this.urlHandlers[pathname] === undefined) {
-            this.urlHandlers[pathname] = {};
+        this._saveCallback(pathname, callback, parseBody, "get");
+    }
+
+    _json(data) {
+        this.statusCode = 200;
+        this.setHeader("Content-Type", "application/json;charset=utf-8");
+        this.end(JSON.stringify(data));
+    }
+
+    _saveCallback(path, callback, parseBody, method) {
+        if (this.urlHandlers[path] === undefined) {
+            this.urlHandlers[path] = {};
         }
 
-        if (this.urlHandlers[pathname].get === undefined) {
-            this.urlHandlers[pathname].get = {
-                callbacks: [callback],
+        if (this.urlHandlers[path][method] === undefined) {
+            this.urlHandlers[path][method] = {
+                callback,
                 parseBody,
             };
         } else {
-            this.urlHandlers[pathname].get.callbacks.push(callback);
+            throw new Error(
+                `Exceeded the number of callbacks for ${method}:${path}`
+            );
         }
     }
 
-    _promisify(pathname, method, func) {
-        return new Promise((resolve, reject) => {
+    async _promisify(pathname, method, func) {
+        const data = await new Promise((resolve, reject) => {
             try {
                 let result = func();
                 resolve(result);
@@ -101,12 +101,11 @@ class Router {
                     )
                 );
             }
-        }).then((result) => {
-            console.info(
-                `${method}: Recived data on ${pathname}\ndata: ${result}`
-            );
-            return JSON.parse(result);
         });
+
+        console.info(`${method}: Recived data on ${pathname}\ndata: ${data}`);
+
+        return JSON.parse(data);
     }
 
     _error(code, errorMessage) {
