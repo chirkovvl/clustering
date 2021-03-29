@@ -22,6 +22,7 @@ async function apiRequest(path, data = {}) {
 
 function App() {
     const [points, setPoints] = useState([]);
+    const [clusteredData, setClusteredData] = useState([]);
 
     const fetchPoints = (numberPoints) => {
         const data = {
@@ -49,15 +50,15 @@ function App() {
             centersGravity: centersGravity,
         };
 
-        apiRequest("/api/clustering", data).then((clusteringData) => {
-            console.log(clusteringData);
+        apiRequest("/api/clustering", data).then((data) => {
+            setClusteredData(data);
         });
     };
 
     return (
         <div className="wrapper">
             <Menu generate={fetchPoints} clustering={fetchClusteringData} />
-            <Canvas points={points} />
+            <Canvas points={points} clusteredData={clusteredData} />
         </div>
     );
 }

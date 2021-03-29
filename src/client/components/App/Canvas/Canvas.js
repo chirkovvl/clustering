@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
-const pointColor = "#C34A36";
+let pointColor = "#C34A36";
 const fillStyle = "#B0A8B9";
 
 window.requestAnimFrame = (function () {
@@ -18,7 +18,7 @@ window.requestAnimFrame = (function () {
     );
 })();
 
-function draw(canvas, points, centersGravity) {
+function draw(canvas, points, centersGravity, clusteredData) {
     const ctx = canvas.getContext("2d");
     let width = canvas.width;
     let height = canvas.height;
@@ -30,7 +30,55 @@ function draw(canvas, points, centersGravity) {
         return [x, y];
     };
 
-    function drawloop(time) {
+    const drawPoints = () => {
+        ctx.fillStyle = pointColor;
+        ctx.beginPath();
+
+        for (let point of points) {
+            let [x, y] = convertCoords(point.x, point.y);
+
+            ctx.moveTo(x, y);
+            ctx.arc(x, y, pointSize, 0, END_ANGLE, true);
+
+            point.x = x;
+            point.y = y;
+        }
+
+        ctx.fill();
+    };
+
+    const drawCentersGravity = () => {
+        for (let center of centersGravity) {
+            let [x, y] = convertCoords(center.x, center.y);
+
+            ctx.fillStyle = center.color;
+            ctx.beginPath();
+            ctx.arc(x, y, pointSize * 2, 0, END_ANGLE, true);
+            ctx.fill();
+
+            center.x = x;
+            center.y = y;
+        }
+    };
+
+    const drawClusteredData = () => {
+        for (let state of clusteredData) {
+            for (let cluster in state) {
+                points = state[cluster].points;
+                pointColor = state[cluster].color;
+                drawPoints();
+
+                centersGravity[cluster] = {
+                    x: state[cluster].x,
+                    y: state[cluster].y,
+                    color: state[cluster].color,
+                };
+                drawCentersGravity();
+            }
+        }
+    };
+
+    const drawloop = (time) => {
         if (width !== canvas.clientWidth || height !== canvas.clientHeight) {
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
@@ -41,44 +89,23 @@ function draw(canvas, points, centersGravity) {
         ctx.fillStyle = fillStyle;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Рисуем точки
-        if (points.length) {
-            ctx.fillStyle = pointColor;
-            ctx.beginPath();
-
-            for (let point of points) {
-                let [x, y] = convertCoords(point.x, point.y);
-
-                ctx.moveTo(x, y);
-                ctx.arc(x, y, pointSize, 0, END_ANGLE, true);
-
-                point.x = x;
-                point.y = y;
+        if (!clusteredData.length) {
+            if (points.length) {
+                drawPoints();
             }
 
-            ctx.fill();
-        }
-
-        // Рисуем центры гравитации
-        if (centersGravity.length) {
-            for (let center of centersGravity) {
-                let [x, y] = convertCoords(center.x, center.y);
-
-                ctx.fillStyle = center.color;
-                ctx.beginPath();
-                ctx.arc(x, y, pointSize * 2, 0, END_ANGLE, true);
-                ctx.fill();
-
-                center.x = x;
-                center.y = y;
+            if (centersGravity.length) {
+                drawCentersGravity();
             }
+        } else {
+            drawClusteredData();
         }
 
         width = canvas.clientWidth;
         height = canvas.clientHeight;
 
         requestAnimFrame(drawloop);
-    }
+    };
 
     drawloop();
 }
@@ -90,7 +117,7 @@ function convertToCanvasSize(canvas, currentX, currentY) {
     return [x, y];
 }
 
-function getDistanceBetween(fromX, fromY, toX, toY) {
+function distanceBetween(fromX, fromY, toX, toY) {
     return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
 }
 
@@ -104,14 +131,12 @@ function randomHexColor() {
 
 function chooseCenterGravity(points, x, y) {
     for (let i = points.length - 1; i >= 0; i--) {
-        let distance = getDistanceBetween(x, y, points[i].x, points[i].y);
+        let distance = distanceBetween(x, y, points[i].x, points[i].y);
 
         if (distance < pointSize + 2) {
-            let point = points[i];
-            points.splice(i, 1);
             return {
-                x: point.x,
-                y: point.y,
+                x: points[i].x,
+                y: points[i].y,
                 color: randomHexColor(),
             };
         }
@@ -121,6 +146,7 @@ function chooseCenterGravity(points, x, y) {
 function Canvas(props) {
     const canvas = useRef(null);
     let points = props.points;
+    let clusteredData = props.clusteredData;
     let centersGravity = [];
 
     Canvas.getWidth = () => canvas.current.width;
@@ -141,8 +167,8 @@ function Canvas(props) {
     });
 
     useEffect(() => {
-        draw(canvas.current, points, centersGravity);
-    }, [points]);
+        draw(canvas.current, points, centersGravity, clusteredData);
+    }, [points, clusteredData]);
 
     return (
         <div className="content">

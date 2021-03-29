@@ -34,6 +34,7 @@ function calcState(points, clusters) {
             state[index] = {
                 x: clusters[index].x,
                 y: clusters[index].y,
+                color: clusters[index].color,
                 points: [],
             };
         }
