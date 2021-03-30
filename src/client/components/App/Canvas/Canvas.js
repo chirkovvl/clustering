@@ -22,6 +22,7 @@ function draw(canvas, points, centersGravity, clusteredData) {
     const ctx = canvas.getContext("2d");
     let width = canvas.width;
     let height = canvas.height;
+    let states = clusteredData.reverse();
 
     const convertCoords = (pointX, pointY) => {
         let x = Math.round((pointX * canvas.clientWidth) / width);
@@ -62,20 +63,33 @@ function draw(canvas, points, centersGravity, clusteredData) {
     };
 
     const drawClusteredData = () => {
-        for (let state of clusteredData) {
-            for (let cluster in state) {
-                points = state[cluster].points;
-                pointColor = state[cluster].color;
-                drawPoints();
+        // for (let i = states.length - 1; i > 0; i--) {
+        //     for (let cluster in states[i]) {
+        //         points = states[i][cluster].points;
+        //         pointColor = states[i][cluster].color;
+        //         drawPoints();
+        //         centersGravity[cluster] = {
+        //             x: states[i][cluster].x,
+        //             y: states[i][cluster].y,
+        //             color: pointColor,
+        //         };
+        //     }
+        //     drawCentersGravity();
+        // }
 
-                centersGravity[cluster] = {
-                    x: state[cluster].x,
-                    y: state[cluster].y,
-                    color: state[cluster].color,
-                };
-                drawCentersGravity();
-            }
+        for (let cluster in states[0]) {
+            points = states[0][cluster].points;
+            pointColor = states[0][cluster].color;
+            drawPoints();
+
+            centersGravity[cluster] = {
+                x: states[0][cluster].x,
+                y: states[0][cluster].y,
+                color: pointColor,
+            };
         }
+
+        drawCentersGravity();
     };
 
     const drawloop = (time) => {
@@ -134,11 +148,14 @@ function chooseCenterGravity(points, x, y) {
         let distance = distanceBetween(x, y, points[i].x, points[i].y);
 
         if (distance < pointSize + 2) {
-            return {
-                x: points[i].x,
-                y: points[i].y,
-                color: randomHexColor(),
-            };
+            if (!points[i].selected) {
+                points[i].selected = true;
+                return {
+                    x: points[i].x,
+                    y: points[i].y,
+                    color: randomHexColor(),
+                };
+            }
         }
     }
 }

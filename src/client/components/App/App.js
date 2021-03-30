@@ -25,6 +25,9 @@ function App() {
     const [clusteredData, setClusteredData] = useState([]);
 
     const fetchPoints = (numberPoints) => {
+        setPoints([]);
+        setClusteredData([]);
+
         const data = {
             numberPoints: numberPoints,
             width: Canvas.getWidth(),
