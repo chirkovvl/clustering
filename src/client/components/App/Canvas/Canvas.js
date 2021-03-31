@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
 let pointColor = "#C34A36";
-const fillStyle = "#B0A8B9";
+const fillStyle = "#dad5e2";
 
 window.requestAnimFrame = (function () {
     return (
@@ -18,11 +18,10 @@ window.requestAnimFrame = (function () {
     );
 })();
 
-function draw(canvas, points, centersGravity, clusteredData) {
+function draw(canvas, points, centersGravity) {
     const ctx = canvas.getContext("2d");
     let width = canvas.width;
     let height = canvas.height;
-    let states = clusteredData.reverse();
 
     const convertCoords = (pointX, pointY) => {
         let x = Math.round((pointX * canvas.clientWidth) / width);
@@ -62,36 +61,6 @@ function draw(canvas, points, centersGravity, clusteredData) {
         }
     };
 
-    const drawClusteredData = () => {
-        // for (let i = states.length - 1; i > 0; i--) {
-        //     for (let cluster in states[i]) {
-        //         points = states[i][cluster].points;
-        //         pointColor = states[i][cluster].color;
-        //         drawPoints();
-        //         centersGravity[cluster] = {
-        //             x: states[i][cluster].x,
-        //             y: states[i][cluster].y,
-        //             color: pointColor,
-        //         };
-        //     }
-        //     drawCentersGravity();
-        // }
-
-        for (let cluster in states[0]) {
-            points = states[0][cluster].points;
-            pointColor = states[0][cluster].color;
-            drawPoints();
-
-            centersGravity[cluster] = {
-                x: states[0][cluster].x,
-                y: states[0][cluster].y,
-                color: pointColor,
-            };
-        }
-
-        drawCentersGravity();
-    };
-
     const drawloop = (time) => {
         if (width !== canvas.clientWidth || height !== canvas.clientHeight) {
             canvas.width = canvas.clientWidth;
@@ -103,17 +72,11 @@ function draw(canvas, points, centersGravity, clusteredData) {
         ctx.fillStyle = fillStyle;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (!clusteredData.length) {
-            if (points.length) {
-                drawPoints();
-            }
+        // Рисуем точки
+        drawPoints();
 
-            if (centersGravity.length) {
-                drawCentersGravity();
-            }
-        } else {
-            drawClusteredData();
-        }
+        // Рисуем центры гравитации (кластеров)
+        drawCentersGravity();
 
         width = canvas.clientWidth;
         height = canvas.clientHeight;
@@ -162,6 +125,7 @@ function chooseCenterGravity(points, x, y) {
 
 function Canvas(props) {
     const canvas = useRef(null);
+
     let points = props.points;
     let clusteredData = props.clusteredData;
     let centersGravity = [];
@@ -174,7 +138,6 @@ function Canvas(props) {
     const clickHandler = (e) => {
         let [x, y] = convertToCanvasSize(e.target, e.clientX, e.clientY);
         let centerGravity = chooseCenterGravity(points, x, y);
-
         if (centerGravity) centersGravity.push(centerGravity);
     };
 
@@ -184,8 +147,8 @@ function Canvas(props) {
     });
 
     useEffect(() => {
-        draw(canvas.current, points, centersGravity, clusteredData);
-    }, [points, clusteredData]);
+        draw(canvas.current, points, centersGravity);
+    }, [points]);
 
     return (
         <div className="content">

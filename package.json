@@ -32,5 +32,9 @@
         "webpack": "^5.24.3",
         "webpack-cli": "^4.5.0",
         "webpack-dev-server": "^3.11.2"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "semi": true
     }
 }
