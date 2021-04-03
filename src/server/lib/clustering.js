@@ -17,7 +17,7 @@ function clusteringData(data) {
         setClustersCoords(clusters, coords);
     }
 
-    return states;
+    return states.reverse().slice(0, 1);
 }
 
 function calcState(points, clusters) {

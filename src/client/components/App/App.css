@@ -72,3 +72,6 @@
     transition: 0.5s;
     z-index: 0;
 }
+#canvas {
+    background-color: #dad5e2;
+}

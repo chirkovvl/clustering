@@ -2,8 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
-let pointColor = "#C34A36";
-const fillStyle = "#dad5e2";
+let defaultPointColor = "#C34A36";
 
 window.requestAnimFrame = (function () {
     return (
@@ -18,10 +17,12 @@ window.requestAnimFrame = (function () {
     );
 })();
 
-function draw(canvas, points, centersGravity) {
+function draw(canvas, points, centersGravity, clusteredData) {
     const ctx = canvas.getContext("2d");
     let width = canvas.width;
     let height = canvas.height;
+    let states = clusteredData || [];
+    let pointColor = defaultPointColor;
 
     const convertCoords = (pointX, pointY) => {
         let x = Math.round((pointX * canvas.clientWidth) / width);
@@ -61,22 +62,40 @@ function draw(canvas, points, centersGravity) {
         }
     };
 
+    const drawClusteringData = () => {
+        let state = states[0];
+
+        for (let cluster in state) {
+            if (state.hasOwnProperty(cluster)) {
+                points = state[cluster].points;
+                pointColor = state[cluster].color;
+                drawPoints();
+
+                centersGravity[cluster] = {
+                    x: state[cluster].x,
+                    y: state[cluster].y,
+                    color: pointColor,
+                };
+            }
+        }
+
+        drawCentersGravity();
+    };
+
     const drawloop = (time) => {
         if (width !== canvas.clientWidth || height !== canvas.clientHeight) {
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
         }
 
-        // Очищаем и заполняем канву
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = fillStyle;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Рисуем точки
-        drawPoints();
-
-        // Рисуем центры гравитации (кластеров)
-        drawCentersGravity();
+        if (!states.length) {
+            drawPoints();
+            drawCentersGravity();
+        } else {
+            drawClusteringData();
+        }
 
         width = canvas.clientWidth;
         height = canvas.clientHeight;
@@ -147,12 +166,21 @@ function Canvas(props) {
     });
 
     useEffect(() => {
+        points = [];
+        draw(canvas.current, points, centersGravity, clusteredData);
+    }, [clusteredData]);
+
+    useEffect(() => {
         draw(canvas.current, points, centersGravity);
     }, [points]);
 
     return (
         <div className="content">
-            <canvas ref={canvas} style={{ width: "100%", height: "100%" }}>
+            <canvas
+                id="canvas"
+                ref={canvas}
+                style={{ width: "100%", height: "100%" }}
+            >
                 <p>Ваш баузер не поддерживает canvas</p>
             </canvas>
         </div>
