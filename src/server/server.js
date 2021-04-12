@@ -1,28 +1,22 @@
-const http = require("http");
-const Router = require("./router");
+const express = require("express");
+const path = require("path");
 const generatePoints = require("./lib/generate");
-const clusteringData = require("./lib/clustering");
+const clusteringPoint = require("./lib/clustering");
+const { host, port } = require("./config/config");
 
-const port = 5000;
-const host = "localhost";
+const app = express();
 
-const router = new Router();
+app.use(express.static(path.resolve(__dirname, "shaders")));
+app.use(express.json());
 
-http.createServer(router.requestHandler.bind(router)).listen(port, host, () =>
-    console.log(`Server started on ${host}:${port}`)
-);
-
-router.post("/api/generate", (req, res) => {
-    let data = req.body;
-    const points = generatePoints(data);
-
-    res.json(points);
-});
-
-router.post("/api/clustering", (req, res) => {
-    let data = req.body;
-    const result = clusteringData(data);
-    console.info(`Number of states: ${result.length}`);
-
+app.post("/api/generate", (req, res) => {
+    const { width, height, radius, quantity } = req.body;
+    let result = generatePoints(width, height, radius, quantity);
     res.json(result);
 });
+
+app.post("/api/clustering", (req, res) => {
+    res.json({ message: "Еще не реализовано" });
+});
+
+app.listen(port, () => console.info(`Server started on ${host}:${port}`));

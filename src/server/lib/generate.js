@@ -1,13 +1,14 @@
-function generatePoints({ numberPoints, width, height, pointSize }) {
-    let arrayPoints = [];
-
-    while (numberPoints) {
-        const x = randomNumber(pointSize, width - pointSize);
-        const y = randomNumber(pointSize, height - pointSize);
-        arrayPoints.push({ x, y });
-        numberPoints--;
+function generatePoints(width, height, radius, quantity) {
+    let points = [];
+    console.log(width, height, radius, quantity);
+    while (quantity) {
+        const x = randomNumber(radius, width - radius);
+        const y = randomNumber(radius, height - radius);
+        points.push({ x, y });
+        quantity--;
     }
-    return arrayPoints;
+
+    return points;
 }
 
 function randomNumber(min, max) {
