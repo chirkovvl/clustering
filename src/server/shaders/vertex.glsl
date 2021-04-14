@@ -1,9 +1,8 @@
-attribute vec3 a_Position;
-
-uniform float u_radius;
+attribute vec3 a_position;
+uniform float u_pointSize;
 
 void main() {
-    
-    gl_Position = a_Position;
-    gl_PointSize = u_radius;
+
+    gl_Position = vec4(a_position, 1.0);
+    gl_PointSize = u_pointSize;
 }

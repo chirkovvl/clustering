@@ -1,66 +1,71 @@
-import React, { useState } from "react";
+import React from "react";
 import Menu from "./Menu/Menu";
 import Canvas from "./Canvas/Canvas";
 import "./App.css";
 
-async function apiRequest(path, data = {}) {
-    const response = await fetch(path, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    });
+class App extends React.Component {
+    constructor(props) {
+        super(props);
 
-    if (response.ok) {
-        return await response.json();
-    } else {
-        alert("Проблемы с сервером");
-        throw new Error(await response.text());
+        this.state = {
+            points: [],
+            pointRadius: 5,
+            pointColor: "#000000",
+        };
+
+        this._fetchPoints = this._fetchPoints.bind(this);
+        this._fetchClusteringData = this._fetchClusteringData.bind(this);
     }
-}
 
-function App() {
-    const [points, setPoints] = useState([]);
-    const [clusteredData, setClusteredData] = useState([]);
-
-    const fetchPoints = (numberPoints) => {
+    _fetchPoints(quantity) {
         const data = {
-            numberPoints: numberPoints,
-            width: Canvas.getWidth(),
-            height: Canvas.getHeight(),
-            pointSize: Canvas.getPointSize(),
+            width: 400,
+            height: 300,
+            radius: this.state.pointRadius,
+            quantity: quantity,
         };
 
-        apiRequest("/api/generate", data).then((points) => {
-            setPoints(points);
+        this._apiRequest("/api/generate", data).then((points) => {
+            this.setState({ points: points });
         });
-    };
+    }
 
-    const fetchClusteringData = () => {
-        const centersGravity = Canvas.getCentersGravity();
+    _fetchClusteringData() {
+        alert("Еще не резализовано");
+    }
 
-        if (!centersGravity.length) {
-            alert("Отсутсуют центры гравитации");
-            return;
+    async _apiRequest(path, data = {}) {
+        const response = await fetch(path, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            alert("Проблемы с сервером");
+            throw new Error(await response.text());
         }
+    }
 
-        const data = {
-            points: points,
-            centersGravity: centersGravity,
-        };
-
-        apiRequest("/api/clustering", data).then((data) => {
-            setClusteredData(data);
-        });
-    };
-
-    return (
-        <div className="wrapper">
-            <Menu generate={fetchPoints} clustering={fetchClusteringData} />
-            <Canvas points={points} clusteredData={clusteredData} />
-        </div>
-    );
+    render() {
+        return (
+            <div className="wrapper">
+                <Menu
+                    generate={this._fetchPoints}
+                    clustering={this._fetchClusteringData}
+                />
+                <Canvas
+                    points={this.state.points}
+                    pointRadius={this.state.pointRadius}
+                    pointColor={this.state.pointColor}
+                />
+            </div>
+        );
+    }
 }
 
 export default App;
