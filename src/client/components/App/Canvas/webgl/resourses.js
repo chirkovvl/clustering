@@ -47,10 +47,8 @@ export function converToSpaceClip(canvas, x, y) {
     let middleX = canvas.clientWidth / 2;
     let middleY = canvas.clientHeight / 2;
 
-    let rect = canvas.getBoundingClientRect();
-
-    x = (x - rect.left - middleX) / middleX;
-    y = (middleY - (y - rect.top)) / middleY;
+    x = (x - middleX) / middleX;
+    y = (middleY - y) / middleY;
 
     return [x, y];
 }

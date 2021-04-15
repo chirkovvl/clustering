@@ -9,10 +9,15 @@ function Canvas(props) {
 
     useEffect(() => {
         webgl = new WebGL(canvas.current);
+
+        Canvas.getSize = () => [
+            webgl.canvas.clientWidth,
+            webgl.canvas.clientHeight,
+        ];
     }, []);
 
     useEffect(() => {
-        console.log(JSON.stringify(points));
+        webgl.points = points;
     }, [points]);
 
     return (

@@ -18,9 +18,11 @@ class App extends React.Component {
     }
 
     _fetchPoints(quantity) {
+        let [canvasWidth, canvasHeight] = Canvas.getSize();
+
         const data = {
-            width: 400,
-            height: 300,
+            width: canvasWidth,
+            height: canvasHeight,
             radius: this.state.pointRadius,
             quantity: quantity,
         };

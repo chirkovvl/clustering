@@ -1,6 +1,6 @@
 function generatePoints(width, height, radius, quantity) {
     let points = [];
-    console.log(width, height, radius, quantity);
+
     while (quantity) {
         const x = randomNumber(radius, width - radius);
         const y = randomNumber(radius, height - radius);
