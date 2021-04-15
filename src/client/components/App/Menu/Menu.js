@@ -7,6 +7,7 @@ function Menu(props) {
     const menu = useRef(null);
     const inputNumber = useRef(null);
     const [errorContent, setErrorContent] = useState("");
+    const maxNumberPoints = 5000;
 
     const toggleMenuHandler = () => {
         menu.current.classList.toggle("toggle-menu");
@@ -15,11 +16,13 @@ function Menu(props) {
     const generatePointsHandler = () => {
         let value = +inputNumber.current.value;
 
-        if (value && value <= 2000) {
+        if (value && value <= maxNumberPoints) {
             props.generate(value);
             setErrorContent("");
         } else {
-            setErrorContent("Заполните поле. (диапазон от 1 до 2000)");
+            setErrorContent(
+                `Заполните поле. (диапазон от 1 до ${maxNumberPoints})`
+            );
         }
     };
 
@@ -29,7 +32,7 @@ function Menu(props) {
             <InputNumber
                 element={inputNumber}
                 min="0"
-                max="2000"
+                max={maxNumberPoints}
                 placeholder="Введите количество точек"
                 errorContent={errorContent}
             />

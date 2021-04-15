@@ -8,7 +8,7 @@ class WebGL {
     constructor(canvas) {
         this.canvas = canvas;
         this._draw = this._draw.bind(this);
-        this._vertexArray = converToSpaceClip(canvas, 5, 5);
+        this._vertexArray = [];
         this.pointSize = 5;
         this._init();
     }
@@ -52,7 +52,6 @@ class WebGL {
         }
 
         gl.getExtension("OES_standard_derivatives");
-        gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -85,7 +84,7 @@ class WebGL {
         this.gl.uniform1f(this.pointSizeUniformLocation, this.pointSize);
         this.gl.enableVertexAttribArray(this.positionAttribLocation);
 
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
         this.gl.useProgram(this.program);
 
