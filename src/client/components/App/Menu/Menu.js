@@ -7,7 +7,7 @@ function Menu(props) {
     const menu = useRef(null);
     const inputNumber = useRef(null);
     const [errorContent, setErrorContent] = useState("");
-    const maxNumberPoints = 5000;
+    const maxNumberPoints = 10000;
 
     const toggleMenuHandler = () => {
         menu.current.classList.toggle("toggle-menu");

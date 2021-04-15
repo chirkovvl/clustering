@@ -9,8 +9,8 @@ void main() {
     vec2 center = vec2(0.5);
     float dist = distance(gl_PointCoord, center);
     float delta = fwidth(dist);
-    float alpha = smoothstep(0.45 - delta, 0.45 + delta, dist);
-    vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
+    float alpha = smoothstep(0.40 - delta, 0.40 + delta, dist);
+    vec4 color = vec4(0.3, 0.3, 0.3, 1.0);
     gl_FragColor = mix(color, gl_FragColor, alpha);
 }
 
