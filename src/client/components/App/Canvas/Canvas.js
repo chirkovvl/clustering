@@ -1,14 +1,14 @@
 import React, { useRef, useEffect } from "react";
 import WebGL from "./webgl/webgl";
 
-let webgl = null;
+let webgl = new WebGL();
 
 function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
 
     useEffect(() => {
-        webgl = new WebGL(canvas.current);
+        webgl.init(canvas.current);
 
         Canvas.getSize = () => [
             webgl.canvas.clientWidth,

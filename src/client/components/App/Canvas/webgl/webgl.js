@@ -6,15 +6,15 @@ import {
 } from "./resourses";
 
 class WebGL {
-    constructor(canvas) {
-        this.canvas = canvas;
+    constructor() {
         this._draw = this._draw.bind(this);
         this._vertexArray = [];
         this.pointSize = 5;
-        this._init();
     }
 
-    _init() {
+    init(canvas) {
+        this.canvas = canvas;
+
         initRequestAnimFrame();
 
         Promise.all([
