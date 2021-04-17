@@ -2,6 +2,7 @@ import {
     loadTextResource,
     createProgram,
     converToSpaceClip,
+    initRequestAnimFrame,
 } from "./resourses";
 
 class WebGL {
@@ -14,18 +15,7 @@ class WebGL {
     }
 
     _init() {
-        window.requestAnimFrame = (function () {
-            return (
-                window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                }
-            );
-        })();
+        initRequestAnimFrame();
 
         Promise.all([
             loadTextResource("/vertex.glsl"),
