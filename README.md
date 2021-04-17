@@ -1,7 +1,7 @@
 # clustering
 A simple web application demonstrating clustering points
 
-![Иллюстрация к проекту](https://github.com/Vladimirch1397/clustering/raw/v0.0.0/screenshots/screenshot.png)
+![Иллюстрация к проекту](https://github.com/Vladimirch1397/clustering/raw/v1.0.0/screenshots/screenshot.png)
 
 ## How to start
 Before you begin you must have pipenv installed
