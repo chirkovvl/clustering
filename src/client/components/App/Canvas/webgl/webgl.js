@@ -63,7 +63,7 @@ class WebGL {
     }
 
     _draw() {
-        this._resizeCanvas();
+        this._resizeCanvasToDisplaySize(this.canvas);
         this.gl.viewport(
             0,
             0,
@@ -83,13 +83,13 @@ class WebGL {
         requestAnimFrame(this._draw);
     }
 
-    _resizeCanvas() {
-        let width = this.canvas.clientWidth;
-        let height = this.canvas.clientHeight;
+    _resizeCanvasToDisplaySize(canvas) {
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
 
-        if (width !== this.canvas.width || height !== this.canvas.height) {
-            this.canvas.width = width;
-            this.canvas.height = height;
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
         }
     }
 
