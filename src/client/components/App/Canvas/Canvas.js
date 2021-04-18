@@ -17,6 +17,14 @@ function Canvas(props) {
     }, []);
 
     useEffect(() => {
+        if (points.length) {
+            points = points.map((point) => {
+                point.color = props.pointDefaultColor;
+                point.radius = props.pointRadius;
+                return point;
+            });
+        }
+
         webgl.points = points;
     }, [points]);
 

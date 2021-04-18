@@ -9,8 +9,8 @@ class App extends React.Component {
 
         this.state = {
             points: [],
-            pointRadius: 5,
-            defaultPointsColor: "#000000",
+            pointRadius: 4,
+            pointDefaultColor: [128, 128, 128],
         };
 
         this._fetchPoints = this._fetchPoints.bind(this);
@@ -63,7 +63,7 @@ class App extends React.Component {
                 <Canvas
                     points={this.state.points}
                     pointRadius={this.state.pointRadius}
-                    defaultPointsColor={this.state.defaultPointsColor}
+                    pointDefaultColor={this.state.pointDefaultColor}
                 />
             </div>
         );

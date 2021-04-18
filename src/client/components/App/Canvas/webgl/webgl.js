@@ -1,7 +1,8 @@
 import {
     loadTextResource,
     createProgram,
-    converToSpaceClip,
+    coordsToSpaceClip,
+    colorToSpaceClip,
     initRequestAnimFrame,
 } from "./resourses";
 
@@ -9,7 +10,6 @@ class WebGL {
     constructor() {
         this._draw = this._draw.bind(this);
         this._vertexArray = [];
-        this.pointSize = 5;
     }
 
     init(canvas) {
@@ -51,11 +51,6 @@ class WebGL {
         gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
         this._updateArrayBuffer(gl, program);
 
-        this.pointSizeUniformLocation = gl.getUniformLocation(
-            program,
-            "u_pointSize"
-        );
-
         this.gl = gl;
         this.program = program;
 
@@ -71,8 +66,9 @@ class WebGL {
             this.canvas.clientHeight
         );
 
-        this.gl.uniform1f(this.pointSizeUniformLocation, this.pointSize);
-        this.gl.enableVertexAttribArray(this.positionAttribLocation);
+        this.gl.enableVertexAttribArray(this._positionAttribLocation);
+        this.gl.enableVertexAttribArray(this._colorAttibLocation);
+        this.gl.enableVertexAttribArray(this._radiusAttribLocation);
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
@@ -110,12 +106,37 @@ class WebGL {
             2,
             gl.FLOAT,
             gl.FALSE,
-            2 * Float32Array.BYTES_PER_ELEMENT,
+            6 * Float32Array.BYTES_PER_ELEMENT,
             0 * Float32Array.BYTES_PER_ELEMENT
         );
 
-        this._verticesNumber = this._vertexArray.length / 2;
-        this.positionAttribLocation = positionAttribLocation;
+        let colorAttribLocation = gl.getAttribLocation(program, "a_color");
+
+        gl.vertexAttribPointer(
+            colorAttribLocation,
+            3,
+            gl.FLOAT,
+            gl.FALSE,
+            6 * Float32Array.BYTES_PER_ELEMENT,
+            2 * Float32Array.BYTES_PER_ELEMENT
+        );
+
+        let radiusAttribLocation = gl.getAttribLocation(program, "a_radius");
+
+        gl.vertexAttribPointer(
+            radiusAttribLocation,
+            1,
+            gl.FLOAT,
+            gl.FALSE,
+            6 * Float32Array.BYTES_PER_ELEMENT,
+            5 * Float32Array.BYTES_PER_ELEMENT
+        );
+
+        this._verticesNumber = this._vertexArray.length / 6;
+
+        this._positionAttribLocation = positionAttribLocation;
+        this._colorAttibLocation = colorAttribLocation;
+        this._radiusAttribLocation = radiusAttribLocation;
     }
 
     /**
@@ -127,7 +148,9 @@ class WebGL {
         if (coords.length) {
             for (let coord of coords) {
                 transformedArray = transformedArray.concat(
-                    converToSpaceClip(this.canvas, coord.x, coord.y)
+                    coordsToSpaceClip(this.canvas, coord.x, coord.y),
+                    colorToSpaceClip(coord.color),
+                    coord.radius
                 );
             }
         }
