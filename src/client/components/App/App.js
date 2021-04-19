@@ -9,7 +9,7 @@ class App extends React.Component {
 
         this.state = {
             points: [],
-            pointRadius: 4,
+            pointRadius: 5,
             pointDefaultColor: [128, 128, 128],
         };
 
