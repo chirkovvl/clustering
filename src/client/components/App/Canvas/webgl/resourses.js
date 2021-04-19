@@ -71,3 +71,20 @@ export function initRequestAnimFrame() {
         );
     })();
 }
+
+export function distance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+
+export function convertToCanvasSize(canvas, x, y) {
+    let rect = canvas.getBoundingClientRect();
+    return [x - rect.x, y - rect.y];
+}
+
+export function randomRGBColor() {
+    return [randomNumber(1, 255), randomNumber(1, 255), randomNumber(1, 255)];
+}
+
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1));
+}
