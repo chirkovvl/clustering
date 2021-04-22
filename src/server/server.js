@@ -22,7 +22,6 @@ router.post("/api/generate", (req, res) => {
 router.post("/api/clustering", (req, res) => {
     let data = req.body;
     const result = clusteringData(data);
-    console.info(`Number of states: ${result.length}`);
 
     res.json(result);
 });

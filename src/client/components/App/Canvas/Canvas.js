@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 const END_ANGLE = Math.PI * 2;
 const pointSize = 5;
-let defaultPointColor = "#C34A36";
+let defaultPointColor = "#808080";
 
 window.requestAnimFrame = (function () {
     return (
@@ -121,7 +121,7 @@ function randomHexColor() {
     const max = 16777215;
     const min = 0;
 
-    let decNumber = Math.floor(min - 0.5 + Math.random() * (max - min + 1));
+    let decNumber = Math.floor(2 + Math.random() * (max - min + 1));
     return "#" + decNumber.toString(16);
 }
 
@@ -176,11 +176,7 @@ function Canvas(props) {
 
     return (
         <div className="content">
-            <canvas
-                id="canvas"
-                ref={canvas}
-                style={{ width: "100%", height: "100%" }}
-            >
+            <canvas id="canvas" ref={canvas}>
                 <p>Ваш баузер не поддерживает canvas</p>
             </canvas>
         </div>

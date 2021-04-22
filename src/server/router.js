@@ -103,8 +103,6 @@ class Router {
             }
         });
 
-        console.info(`${method}: Recived data on ${pathname}\ndata: ${data}`);
-
         return JSON.parse(data);
     }
 
