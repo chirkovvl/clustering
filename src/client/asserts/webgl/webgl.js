@@ -18,8 +18,8 @@ class WebGL {
         initRequestAnimFrame();
 
         Promise.all([
-            loadTextResource("/vertex.glsl"),
-            loadTextResource("/fragment.glsl"),
+            loadTextResource("/shaders/vertex.glsl"),
+            loadTextResource("/shaders/fragment.glsl"),
         ])
             .then((shaders) => {
                 return this._start(...shaders);

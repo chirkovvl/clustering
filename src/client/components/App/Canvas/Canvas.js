@@ -1,37 +1,45 @@
 import React, { useRef, useEffect } from "react";
-import WebGL from "./webgl/webgl";
-import {
-    convertToCanvasSize,
-    distance,
-    randomRGBColor,
-} from "./webgl/resourses";
 
-let webgl = new WebGL();
+function randomRGBColor() {
+    return [randomNumber(1, 255), randomNumber(1, 255), randomNumber(1, 255)];
+}
 
-function Canvas(props) {
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1));
+}
+
+function convertToCanvasSize(canvas, x, y) {
+    let rect = canvas.getBoundingClientRect();
+    return [x - rect.x, y - rect.y];
+}
+
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+
+export default function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
+    let pointsColor = props.pointDefaultColor;
+    let pointsRadius = props.pointsRadius;
 
     useEffect(() => {
-        webgl.init(canvas.current);
-
-        Canvas.getSize = () => [
-            webgl.canvas.clientWidth,
-            webgl.canvas.clientHeight,
-        ];
+        // Canvas.getSize = () => [
+        //     webgl.canvas.clientWidth,
+        //     webgl.canvas.clientHeight,
+        // ];
     }, []);
 
     useEffect(() => {
         if (points.length) {
             points = points.map((point) => {
-                point.color = props.pointDefaultColor;
-                point.radius = props.pointRadius;
+                point.color = pointsColor;
+                point.radius = pointsRadius;
                 return point;
             });
         }
 
-        webgl.points = points;
-        console.log(points);
+        console.log("Подготовленные точки:", points);
     }, [points]);
 
     const handleClick = (e) => {
@@ -57,5 +65,3 @@ function Canvas(props) {
         </div>
     );
 }
-
-export default Canvas;

@@ -10,7 +10,7 @@
     width: 30%;
     height: 100%;
     background: rgb(17, 6, 56);
-    transition: 1s;
+    transition: 0.5s;
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
@@ -45,7 +45,7 @@
     background: #fff;
     border-radius: 5px 0 0 5px;
     cursor: pointer;
-    transition: 1s;
+    transition: 0.5s;
 }
 
 .control {
@@ -71,7 +71,7 @@
     top: 0;
     height: 100%;
     width: 70%;
-    transition: 1s;
+    transition: 0.5s;
     z-index: 0;
 }
 #canvas {

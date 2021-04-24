@@ -2,7 +2,8 @@ const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { HotModuleReplacementPlugin } = require("webpack");
-const backend = "http://localhost:5000";
+const api = "http://localhost:5000";
+const port = 3000;
 
 module.exports = {
     mode: "development",
@@ -45,13 +46,19 @@ module.exports = {
     ],
     devServer: {
         historyApiFallback: true,
-        contentBase: path.resolve(__dirname, "./dist"),
+        contentBase: [
+            path.resolve(__dirname, "./dist"),
+            path.resolve(__dirname, "./src/client/asserts"),
+        ],
         open: true,
         compress: true,
         hot: true,
-        port: 3000,
+        port: port,
         proxy: {
-            "*": backend,
+            "/api": {
+                target: api,
+                pathRewrite: { "^/api": "" },
+            },
         },
     },
 };
