@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
 
+let worker = null;
+
 function randomRGBColor() {
     return [randomNumber(1, 255), randomNumber(1, 255), randomNumber(1, 255)];
 }
@@ -17,17 +19,53 @@ function distance(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
+function setSize(width, height) {
+    worker.postMessage({
+        type: "size",
+        width,
+        height,
+    });
+}
+
+function handleWorkerMessage(e) {
+    console.log(e);
+}
+
 export default function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
     let pointsColor = props.pointDefaultColor;
     let pointsRadius = props.pointsRadius;
 
+    function render() {
+        setSize(canvas.current.clientWidth, canvas.current.clientHeight);
+        requestAnimationFrame(render);
+    }
+
     useEffect(() => {
-        // Canvas.getSize = () => [
-        //     webgl.canvas.clientWidth,
-        //     webgl.canvas.clientHeight,
-        // ];
+        Canvas.getSize = () => {
+            return [canvas.current.clientWidth, canvas.current.clientHeight];
+        };
+
+        if (canvas.current.transferControlToOffscreen) {
+            let offScreenCanvas = canvas.current.transferControlToOffscreen();
+
+            worker = new Worker("/webgl/webgl.js");
+
+            worker.postMessage(
+                {
+                    type: "main",
+                    canvas: offScreenCanvas,
+                },
+                [offScreenCanvas]
+            );
+
+            worker.onmessage = handleWorkerMessage;
+
+            render();
+        } else {
+            alert("Ваш браузер не поддерживает offScreenCanvas");
+        }
     }, []);
 
     useEffect(() => {
@@ -51,7 +89,6 @@ export default function Canvas(props) {
                     points[i].color = randomRGBColor();
                     points[i].radius *= 2;
                     points[i].selected = true;
-                    webgl.points = points;
                 }
             }
         }
