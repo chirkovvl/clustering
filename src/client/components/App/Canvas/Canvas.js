@@ -19,7 +19,19 @@ function distance(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
-function setSize(width, height) {
+function handleWorkerMessage(e) {
+    let type = e.data.type;
+
+    switch (type) {
+        case "inited":
+            resizeCanvas();
+            break;
+    }
+}
+
+function resizeCanvas() {
+    let [width, height] = Canvas.getSize();
+
     worker.postMessage({
         type: "size",
         width,
@@ -27,20 +39,11 @@ function setSize(width, height) {
     });
 }
 
-function handleWorkerMessage(e) {
-    console.log(e);
-}
-
 export default function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
     let pointsColor = props.pointDefaultColor;
     let pointsRadius = props.pointsRadius;
-
-    function render() {
-        setSize(canvas.current.clientWidth, canvas.current.clientHeight);
-        requestAnimationFrame(render);
-    }
 
     useEffect(() => {
         Canvas.getSize = () => {
@@ -61,11 +64,11 @@ export default function Canvas(props) {
             );
 
             worker.onmessage = handleWorkerMessage;
-
-            render();
         } else {
             alert("Ваш браузер не поддерживает offScreenCanvas");
         }
+
+        window.addEventListener("resize", resizeCanvas);
     }, []);
 
     useEffect(() => {

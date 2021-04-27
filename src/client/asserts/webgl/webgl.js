@@ -3,7 +3,7 @@ importScripts("/webgl/resourses.js");
 let canvas;
 let gl;
 let program;
-let vertexArray = [0.0, 0.0, 1.0, 0.5, 0.0, 50.0];
+let vertexArray = [0.0, 0.0, 1.0, 0.5, 0.0, 100.0];
 let verticesNumber = 0;
 let positionAttribLocation;
 let colorAttribLocation;
@@ -16,12 +16,13 @@ let handlers = {
 
 onmessage = (e) => {
     let type = e.data.type;
+    let fn = handlers[type];
 
-    if (type in handlers) {
-        handlers[type](e.data);
-    } else {
-        throw new Error(`Method "${type}" not implemented`);
+    if (!fn) {
+        throw new Error(`Not handler for type: "${type}"`);
     }
+
+    fn(e.data);
 };
 
 async function initWebGL(data) {
@@ -41,7 +42,13 @@ async function initWebGL(data) {
         loadTextResource("/shaders/fragment.glsl"),
     ]);
 
-    if (shaders) startWebGL(...shaders);
+    if (shaders) {
+        postMessage({
+            type: "inited",
+        });
+
+        startWebGL(...shaders);
+    }
 }
 
 function startWebGL(vertexShaderText, fragmentShaderText) {
@@ -76,7 +83,7 @@ function resizeCanvasToDisplaySize(data) {
         canvas.height = height;
     }
 
-    gl.viewport(0, 0, width, height);
+    gl.viewport(0, 0, canvas.width, canvas.height);
     draw();
 }
 
