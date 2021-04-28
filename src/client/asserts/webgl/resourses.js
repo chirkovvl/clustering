@@ -44,8 +44,8 @@ function createShader(gl, type, source) {
 }
 
 function coordsToSpaceClip(canvas, x, y) {
-    let middleX = canvas.clientWidth / 2;
-    let middleY = canvas.clientHeight / 2;
+    let middleX = canvas.width / 2;
+    let middleY = canvas.height / 2;
 
     x = (x - middleX) / middleX;
     y = (middleY - y) / middleY;

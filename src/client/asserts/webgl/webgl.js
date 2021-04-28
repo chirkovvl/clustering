@@ -3,7 +3,7 @@ importScripts("/webgl/resourses.js");
 let canvas;
 let gl;
 let program;
-let vertexArray = [0.0, 0.0, 1.0, 0.5, 0.0, 100.0];
+let vertexArray = [];
 let verticesNumber = 0;
 let positionAttribLocation;
 let colorAttribLocation;
@@ -12,6 +12,7 @@ let radiusAttribLocation;
 let handlers = {
     main: initWebGL,
     size: resizeCanvasToDisplaySize,
+    points: setPoints,
 };
 
 onmessage = (e) => {
@@ -128,26 +129,28 @@ function updateArrayBuffer() {
     );
 
     verticesNumber = vertexArray.length / 6;
+
+    draw();
 }
 
-// /**
-//      * @param {string | any[]} coords
-//      */
-//  set points(coords) {
-//     let transformedArray = [];
+function setPoints(data) {
+    let { points } = data;
 
-//     if (coords.length) {
-//         for (let coord of coords) {
-//             transformedArray = transformedArray.concat(
-//                 coordsToSpaceClip(this.canvas, coord.x, coord.y),
-//                 colorToSpaceClip(coord.color),
-//                 coord.radius
-//             );
-//         }
-//     }
+    let transformedArray = [];
 
-//     this._vertexArray = transformedArray;
-//     if (this.gl && this.program) {
-//         this._updateArrayBuffer(this.gl, this.program);
-//     }
-// }
+    if (points.length) {
+        for (let point of points) {
+            transformedArray = transformedArray.concat(
+                coordsToSpaceClip(canvas, point.x, point.y),
+                colorToSpaceClip(point.color),
+                point.radius
+            );
+        }
+    }
+
+    vertexArray = transformedArray;
+
+    if (gl && program) {
+        updateArrayBuffer();
+    }
+}

@@ -39,11 +39,18 @@ function resizeCanvas() {
     });
 }
 
+function setPoints(points) {
+    worker.postMessage({
+        type: "points",
+        points,
+    });
+}
+
 export default function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
-    let pointsColor = props.pointDefaultColor;
-    let pointsRadius = props.pointsRadius;
+    let pointColor = props.pointDefaultColor;
+    let pointRadius = props.pointRadius;
 
     useEffect(() => {
         Canvas.getSize = () => {
@@ -74,24 +81,26 @@ export default function Canvas(props) {
     useEffect(() => {
         if (points.length) {
             points = points.map((point) => {
-                point.color = pointsColor;
-                point.radius = pointsRadius;
+                point.color = pointColor;
+                point.radius = pointRadius;
                 return point;
             });
         }
 
-        console.log("Подготовленные точки:", points);
+        setPoints(points);
     }, [points]);
 
     const handleClick = (e) => {
         let [x, y] = convertToCanvasSize(canvas.current, e.clientX, e.clientY);
 
         for (let i = points.length - 1; i >= 0; i--) {
-            if (distance(x, y, points[i].x, points[i].y) < props.pointRadius) {
-                if (!points[i].selected) {
+            if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
+                if (!points[i].centerGravity) {
                     points[i].color = randomRGBColor();
                     points[i].radius *= 2;
-                    points[i].selected = true;
+                    points[i].centerGravity = true;
+                    setPoints(points);
+                    return;
                 }
             }
         }
