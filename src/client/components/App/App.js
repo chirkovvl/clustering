@@ -10,7 +10,7 @@ class App extends React.Component {
         this.state = {
             points: [],
             pointRadius: 5,
-            pointDefaultColor: [255, 128, 0],
+            pointDefaultColor: [128, 128, 128],
         };
 
         this._fetchPoints = this._fetchPoints.bind(this);

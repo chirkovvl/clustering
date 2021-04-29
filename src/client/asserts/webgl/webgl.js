@@ -10,9 +10,10 @@ let colorAttribLocation;
 let radiusAttribLocation;
 
 let handlers = {
-    main: initWebGL,
+    init: initWebGL,
     size: resizeCanvasToDisplaySize,
     points: setPoints,
+    centers: setCentersGravity,
 };
 
 onmessage = (e) => {
@@ -134,21 +135,39 @@ function updateArrayBuffer() {
 }
 
 function setPoints(data) {
-    let { points } = data;
+    let { points, color, radius } = data;
 
     let transformedArray = [];
+
+    let pointColor = colorToSpaceClip(color);
 
     if (points.length) {
         for (let point of points) {
             transformedArray = transformedArray.concat(
                 coordsToSpaceClip(canvas, point.x, point.y),
-                colorToSpaceClip(point.color),
-                point.radius
+                pointColor,
+                radius
             );
         }
     }
 
     vertexArray = transformedArray;
+
+    if (gl && program) {
+        updateArrayBuffer();
+    }
+}
+
+function setCentersGravity(data) {
+    let { centers } = data;
+
+    for (let idCenter in centers) {
+        let color = colorToSpaceClip(centers[idCenter].color);
+        let radius = centers[idCenter].radius;
+        let data = color.concat(radius);
+
+        vertexArray.splice(idCenter * 6 + 2, 4, ...data);
+    }
 
     if (gl && program) {
         updateArrayBuffer();

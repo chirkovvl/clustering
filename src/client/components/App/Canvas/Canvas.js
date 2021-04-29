@@ -29,6 +29,16 @@ function handleWorkerMessage(e) {
     }
 }
 
+function initWebGL(canvas) {
+    worker.postMessage(
+        {
+            type: "init",
+            canvas,
+        },
+        [canvas]
+    );
+}
+
 function resizeCanvas() {
     let [width, height] = Canvas.getSize();
 
@@ -39,10 +49,19 @@ function resizeCanvas() {
     });
 }
 
-function setPoints(points) {
+function setPoints(points, color, radius) {
     worker.postMessage({
         type: "points",
         points,
+        color,
+        radius,
+    });
+}
+
+function setCentersGravity(centers) {
+    worker.postMessage({
+        type: "centers",
+        centers,
     });
 }
 
@@ -51,6 +70,7 @@ export default function Canvas(props) {
     let points = props.points;
     let pointColor = props.pointDefaultColor;
     let pointRadius = props.pointRadius;
+    let centersGravity = {};
 
     useEffect(() => {
         Canvas.getSize = () => {
@@ -62,13 +82,7 @@ export default function Canvas(props) {
 
             worker = new Worker("/webgl/webgl.js");
 
-            worker.postMessage(
-                {
-                    type: "main",
-                    canvas: offScreenCanvas,
-                },
-                [offScreenCanvas]
-            );
+            initWebGL(offScreenCanvas);
 
             worker.onmessage = handleWorkerMessage;
         } else {
@@ -79,15 +93,7 @@ export default function Canvas(props) {
     }, []);
 
     useEffect(() => {
-        if (points.length) {
-            points = points.map((point) => {
-                point.color = pointColor;
-                point.radius = pointRadius;
-                return point;
-            });
-        }
-
-        setPoints(points);
+        setPoints(points, pointColor, pointRadius);
     }, [points]);
 
     const handleClick = (e) => {
@@ -95,11 +101,12 @@ export default function Canvas(props) {
 
         for (let i = points.length - 1; i >= 0; i--) {
             if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
-                if (!points[i].centerGravity) {
-                    points[i].color = randomRGBColor();
-                    points[i].radius *= 2;
-                    points[i].centerGravity = true;
-                    setPoints(points);
+                if (!(i in centersGravity)) {
+                    centersGravity[i] = {
+                        color: randomRGBColor(),
+                        radius: pointRadius * 2,
+                    };
+                    setCentersGravity(centersGravity);
                     return;
                 }
             }
