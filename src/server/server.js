@@ -14,7 +14,9 @@ app.post("/generate", (req, res) => {
 });
 
 app.post("/clustering", (req, res) => {
-    res.json({ message: "Еще не реализовано" });
+    let { points, centersGravity } = req.body;
+    let result = clusteringPoint(points, centersGravity);
+    res.json(result);
 });
 
 app.listen(port, () => console.info(`Server started on ${host}:${port}`));

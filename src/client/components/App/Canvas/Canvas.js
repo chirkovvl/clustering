@@ -7,7 +7,7 @@ function randomRGBColor() {
 }
 
 function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1));
+    return Math.floor(min - 0.5 + Math.random() * (max - min + 1));
 }
 
 function convertToCanvasSize(canvas, x, y) {
@@ -70,13 +70,18 @@ export default function Canvas(props) {
     let points = props.points;
     let pointColor = props.pointDefaultColor;
     let pointRadius = props.pointRadius;
+    let clusteringStates = props.clusteringData;
     let centersGravity = {};
 
-    useEffect(() => {
-        Canvas.getSize = () => {
-            return [canvas.current.clientWidth, canvas.current.clientHeight];
-        };
+    Canvas.getSize = () => {
+        return [canvas.current.clientWidth, canvas.current.clientHeight];
+    };
 
+    Canvas.getCentersGravity = () => {
+        return Object.values(centersGravity);
+    };
+
+    useEffect(() => {
         if (canvas.current.transferControlToOffscreen) {
             let offScreenCanvas = canvas.current.transferControlToOffscreen();
 
@@ -96,6 +101,10 @@ export default function Canvas(props) {
         setPoints(points, pointColor, pointRadius);
     }, [points]);
 
+    useEffect(() => {
+        console.log(clusteringStates);
+    }, [clusteringStates]);
+
     const handleClick = (e) => {
         let [x, y] = convertToCanvasSize(canvas.current, e.clientX, e.clientY);
 
@@ -103,6 +112,8 @@ export default function Canvas(props) {
             if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
                 if (!(i in centersGravity)) {
                     centersGravity[i] = {
+                        x: points[i].x,
+                        y: points[i].y,
                         color: randomRGBColor(),
                         radius: pointRadius * 2,
                     };

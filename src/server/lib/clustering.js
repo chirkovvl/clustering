@@ -1,8 +1,6 @@
 const fe = require("fast-equals");
 
-function clusteringData(data) {
-    let points = data.points;
-    let clusters = data.centersGravity;
+function clusteringData(points, clusters) {
     let states = [];
 
     while (true) {

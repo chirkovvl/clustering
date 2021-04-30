@@ -11,6 +11,7 @@ class App extends React.Component {
             points: [],
             pointRadius: 5,
             pointDefaultColor: [128, 128, 128],
+            clusteringData: [],
         };
 
         this._fetchPoints = this._fetchPoints.bind(this);
@@ -33,7 +34,16 @@ class App extends React.Component {
     }
 
     _fetchClusteringData() {
-        alert("Еще не резализовано");
+        let centersGravity = Canvas.getCentersGravity();
+
+        const data = {
+            points: this.state.points,
+            centersGravity,
+        };
+
+        this._apiRequest("/api/clustering", data).then((clusteringData) => {
+            this.setState({ clusteringData });
+        });
     }
 
     async _apiRequest(path, data = {}) {
@@ -61,6 +71,7 @@ class App extends React.Component {
                     clustering={this._fetchClusteringData}
                 />
                 <Canvas
+                    clusteringData={this.state.clusteringData}
                     points={this.state.points}
                     pointRadius={this.state.pointRadius}
                     pointDefaultColor={this.state.pointDefaultColor}
