@@ -36,6 +36,11 @@ class App extends React.Component {
     _fetchClusteringData() {
         let centersGravity = Canvas.getCentersGravity();
 
+        if (!centersGravity.length) {
+            alert("Отсутствуют центры гравитации");
+            return;
+        }
+
         const data = {
             points: this.state.points,
             centersGravity,

@@ -182,7 +182,7 @@ function setClustersStates(data) {
     let idState = 0;
 
     if (states.length) {
-        let idInterval = setInterval(() => {
+        let animClustering = () => {
             let state = Object.values(states[idState]);
             pointsData = [];
 
@@ -203,7 +203,11 @@ function setClustersStates(data) {
 
             idState++;
 
-            if (idState >= states.length) clearInterval(idInterval);
-        }, 500);
+            let idAnimation = requestAnimationFrame(animClustering);
+
+            if (idState >= states.length) cancelAnimationFrame(idAnimation);
+        };
+
+        requestAnimationFrame(animClustering);
     }
 }
