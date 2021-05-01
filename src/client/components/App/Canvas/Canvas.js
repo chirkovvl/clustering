@@ -52,9 +52,13 @@ function resizeCanvas() {
 function setPoints(points, color, radius) {
     worker.postMessage({
         type: "points",
-        points,
-        color,
-        radius,
+        pointsData: [
+            {
+                points,
+                color,
+                radius,
+            },
+        ],
     });
 }
 
@@ -65,12 +69,19 @@ function setCentersGravity(centers) {
     });
 }
 
+function setClusteringData(states) {
+    worker.postMessage({
+        type: "clusters",
+        states,
+    });
+}
+
 export default function Canvas(props) {
     let canvas = useRef(null);
     let points = props.points;
     let pointColor = props.pointDefaultColor;
     let pointRadius = props.pointRadius;
-    let clusteringStates = props.clusteringData;
+    let clustersStates = props.clusteringData;
     let centersGravity = {};
 
     Canvas.getSize = () => {
@@ -102,8 +113,8 @@ export default function Canvas(props) {
     }, [points]);
 
     useEffect(() => {
-        console.log(clusteringStates);
-    }, [clusteringStates]);
+        setClusteringData(clustersStates);
+    }, [clustersStates]);
 
     const handleClick = (e) => {
         let [x, y] = convertToCanvasSize(canvas.current, e.clientX, e.clientY);

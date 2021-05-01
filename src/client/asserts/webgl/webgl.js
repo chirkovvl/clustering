@@ -14,6 +14,7 @@ let handlers = {
     size: resizeCanvasToDisplaySize,
     points: setPoints,
     centers: setCentersGravity,
+    clusters: setClustersStates,
 };
 
 onmessage = (e) => {
@@ -86,6 +87,7 @@ function resizeCanvasToDisplaySize(data) {
     }
 
     gl.viewport(0, 0, canvas.width, canvas.height);
+
     draw();
 }
 
@@ -135,19 +137,20 @@ function updateArrayBuffer() {
 }
 
 function setPoints(data) {
-    let { points, color, radius } = data;
-
+    let { pointsData } = data;
     let transformedArray = [];
 
-    let pointColor = colorToSpaceClip(color);
+    for (let { points, color, radius } of pointsData) {
+        let pointColor = colorToSpaceClip(color);
 
-    if (points.length) {
-        for (let point of points) {
-            transformedArray = transformedArray.concat(
-                coordsToSpaceClip(canvas, point.x, point.y),
-                pointColor,
-                radius
-            );
+        if (points.length) {
+            for (let point of points) {
+                transformedArray = transformedArray.concat(
+                    coordsToSpaceClip(canvas, point.x, point.y),
+                    pointColor,
+                    radius
+                );
+            }
         }
     }
 
@@ -171,5 +174,36 @@ function setCentersGravity(data) {
 
     if (gl && program) {
         updateArrayBuffer();
+    }
+}
+
+function setClustersStates(data) {
+    let { states } = data;
+    let idState = 0;
+
+    if (states.length) {
+        let idInterval = setInterval(() => {
+            let state = Object.values(states[idState]);
+            pointsData = [];
+
+            for (let cluster of state) {
+                pointsData.push({
+                    points: [{ x: cluster.x, y: cluster.y }],
+                    color: cluster.color,
+                    radius: 10,
+                });
+                pointsData.push({
+                    points: cluster.points,
+                    color: cluster.color,
+                    radius: 5,
+                });
+            }
+
+            setPoints({ pointsData });
+
+            idState++;
+
+            if (idState >= states.length) clearInterval(idInterval);
+        }, 500);
     }
 }
