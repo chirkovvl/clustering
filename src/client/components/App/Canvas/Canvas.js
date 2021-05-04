@@ -26,6 +26,10 @@ function handleWorkerMessage(e) {
         case "inited":
             resizeCanvas();
             break;
+        case "timer":
+            let finishTime = new Date() - window.startTime;
+            console.log(`Время затраченное на кластеризацию ms: ${finishTime}`);
+            break;
     }
 }
 

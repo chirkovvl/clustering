@@ -157,6 +157,11 @@ function setPoints(data) {
     vertexArray = transformedArray;
 
     if (gl && program) {
+        if (pointsData.length > 1) {
+            self.postMessage({
+                type: "timer",
+            });
+        }
         updateArrayBuffer();
     }
 }

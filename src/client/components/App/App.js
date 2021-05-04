@@ -35,6 +35,7 @@ class App extends React.Component {
     }
 
     _fetchClusteringData() {
+        window.startTime = new Date();
         let centersGravity = Canvas.getCentersGravity();
 
         if (!centersGravity.length) {
