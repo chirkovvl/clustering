@@ -4,10 +4,12 @@ attribute float a_radius;
 
 varying vec3 v_color;
 
+uniform mat3 u_matrix;
+
 void main() {
 
     v_color = a_color;
-
-    gl_Position = vec4(a_position, 0.0, 1.0);
+  
+    gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
     gl_PointSize = a_radius * 3.0;
 }

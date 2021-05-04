@@ -10,7 +10,7 @@ class App extends React.Component {
         this.state = {
             points: [],
             pointRadius: 5,
-            pointDefaultColor: [128, 128, 128],
+            pointDefaultColor: [0.5, 0.5, 0.5],
             clustersStates: [],
             maxNumberPoints: 10000,
         };

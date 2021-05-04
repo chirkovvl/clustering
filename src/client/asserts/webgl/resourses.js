@@ -43,16 +43,6 @@ function createShader(gl, type, source) {
     return shader;
 }
 
-function coordsToSpaceClip(canvas, x, y) {
-    let middleX = canvas.width / 2;
-    let middleY = canvas.height / 2;
-
-    x = (x - middleX) / middleX;
-    y = (middleY - y) / middleY;
-
-    return [x, y];
-}
-
-function colorToSpaceClip(color) {
-    return color.map((item) => item / 255);
+function getProjectionMatrix(width, height) {
+    return [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1];
 }

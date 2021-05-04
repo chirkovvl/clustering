@@ -3,11 +3,13 @@ importScripts("/webgl/resourses.js");
 let canvas;
 let gl;
 let program;
-let vertexArray = [];
+let vertexArray;
 let verticesNumber = 0;
 let positionAttribLocation;
 let colorAttribLocation;
 let radiusAttribLocation;
+let matrixProjection;
+let matrixUniformLocation;
 
 let handlers = {
     init: initWebGL,
@@ -30,6 +32,7 @@ onmessage = (e) => {
 
 async function initWebGL(data) {
     canvas = data.canvas;
+    let size = data.metaData.size;
 
     gl =
         canvas.getContext("webgl", {
@@ -46,10 +49,8 @@ async function initWebGL(data) {
     ]);
 
     if (shaders) {
-        postMessage({
-            type: "inited",
-        });
-
+        matrixProjection = getProjectionMatrix(...size);
+        resizeCanvasToDisplaySize({ size });
         startWebGL(...shaders);
     }
 }
@@ -67,6 +68,8 @@ function startWebGL(vertexShaderText, fragmentShaderText) {
 }
 
 function draw() {
+    gl.uniformMatrix3fv(matrixUniformLocation, false, matrixProjection);
+
     gl.enableVertexAttribArray(positionAttribLocation);
     gl.enableVertexAttribArray(colorAttribLocation);
     gl.enableVertexAttribArray(radiusAttribLocation);
@@ -79,7 +82,7 @@ function draw() {
 }
 
 function resizeCanvasToDisplaySize(data) {
-    let { width, height } = data;
+    let [width, height] = data.size;
 
     if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
@@ -131,6 +134,8 @@ function updateArrayBuffer() {
         5 * Float32Array.BYTES_PER_ELEMENT
     );
 
+    matrixUniformLocation = gl.getUniformLocation(program, "u_matrix");
+
     verticesNumber = vertexArray.length / 6;
 
     draw();
@@ -141,13 +146,12 @@ function setPoints(data) {
     let transformedArray = [];
 
     for (let { points, color, radius } of pointsData) {
-        let pointColor = colorToSpaceClip(color);
-
         if (points.length) {
             for (let point of points) {
                 transformedArray = transformedArray.concat(
-                    coordsToSpaceClip(canvas, point.x, point.y),
-                    pointColor,
+                    point.x,
+                    point.y,
+                    color,
                     radius
                 );
             }
@@ -170,7 +174,7 @@ function setCentersGravity(data) {
     let { centers } = data;
 
     for (let idCenter in centers) {
-        let color = colorToSpaceClip(centers[idCenter].color);
+        let color = centers[idCenter].color;
         let radius = centers[idCenter].radius;
         let data = color.concat(radius);
 

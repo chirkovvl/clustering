@@ -3,11 +3,9 @@ import React, { useRef, useEffect } from "react";
 let worker = null;
 
 function randomRGBColor() {
-    return [randomNumber(1, 255), randomNumber(1, 255), randomNumber(1, 255)];
-}
-
-function randomNumber(min, max) {
-    return Math.floor(min - 0.5 + Math.random() * (max - min + 1));
+    return Array(3)
+        .fill()
+        .map(() => Number(Math.random().toFixed(2)));
 }
 
 function convertToCanvasSize(canvas, x, y) {
@@ -23,9 +21,6 @@ function handleWorkerMessage(e) {
     let type = e.data.type;
 
     switch (type) {
-        case "inited":
-            resizeCanvas();
-            break;
         case "timer":
             let finishTime = new Date() - window.startTime;
             console.log(`Время затраченное на кластеризацию ms: ${finishTime}`);
@@ -33,23 +28,21 @@ function handleWorkerMessage(e) {
     }
 }
 
-function initWebGL(canvas) {
+function initWebGL(canvas, metaData) {
     worker.postMessage(
         {
             type: "init",
             canvas,
+            metaData,
         },
         [canvas]
     );
 }
 
 function resizeCanvas() {
-    let [width, height] = Canvas.getSize();
-
     worker.postMessage({
         type: "size",
-        width,
-        height,
+        size: Canvas.getSize(),
     });
 }
 
@@ -102,7 +95,7 @@ export default function Canvas(props) {
 
             worker = new Worker("/webgl/webgl.js");
 
-            initWebGL(offScreenCanvas);
+            initWebGL(offScreenCanvas, { size: Canvas.getSize() });
 
             worker.onmessage = handleWorkerMessage;
         } else {
