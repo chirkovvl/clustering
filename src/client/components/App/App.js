@@ -12,6 +12,7 @@ class App extends React.Component {
             pointRadius: 5,
             pointDefaultColor: [128, 128, 128],
             clustersStates: [],
+            maxNumberPoints: 10000,
         };
 
         this._fetchPoints = this._fetchPoints.bind(this);
@@ -74,6 +75,7 @@ class App extends React.Component {
                 <Menu
                     generate={this._fetchPoints}
                     clustering={this._fetchClusteringData}
+                    maxNumberPoints={this.state.maxNumberPoints}
                 />
                 <Canvas
                     clusteringData={this.state.clustersStates}
