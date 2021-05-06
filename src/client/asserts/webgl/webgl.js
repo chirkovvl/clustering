@@ -31,8 +31,8 @@ onmessage = (e) => {
 };
 
 async function initWebGL(data) {
+    let { width, height } = data;
     canvas = data.canvas;
-    let size = data.metaData.size;
 
     gl =
         canvas.getContext("webgl", {
@@ -49,8 +49,8 @@ async function initWebGL(data) {
     ]);
 
     if (shaders) {
-        matrixProjection = getProjectionMatrix(...size);
-        resizeCanvasToDisplaySize({ size });
+        matrixProjection = getProjectionMatrix(width, height);
+        resizeCanvasToDisplaySize({ size: [width, height] });
         startWebGL(...shaders);
     }
 }

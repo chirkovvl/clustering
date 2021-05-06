@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from "react";
 
 let worker = null;
+let initCanvasWidth;
+let initCanvasHeight;
 
 function randomRGBColor() {
     return Array(3)
@@ -10,7 +12,11 @@ function randomRGBColor() {
 
 function convertToCanvasSize(canvas, x, y) {
     let rect = canvas.getBoundingClientRect();
-    return [x - rect.x, y - rect.y];
+
+    return [
+        ((x - rect.x) * initCanvasWidth) / canvas.width,
+        ((y - rect.y) * initCanvasHeight) / canvas.height,
+    ];
 }
 
 function distance(x1, y1, x2, y2) {
@@ -28,12 +34,18 @@ function handleWorkerMessage(e) {
     }
 }
 
-function initWebGL(canvas, metaData) {
+function initWebGL(canvas) {
+    let [width, height] = Canvas.getSize();
+
+    initCanvasWidth = width;
+    initCanvasHeight = height;
+
     worker.postMessage(
         {
             type: "init",
             canvas,
-            metaData,
+            width,
+            height,
         },
         [canvas]
     );
@@ -95,7 +107,7 @@ export default function Canvas(props) {
 
             worker = new Worker("/webgl/webgl.js");
 
-            initWebGL(offScreenCanvas, { size: Canvas.getSize() });
+            initWebGL(offScreenCanvas);
 
             worker.onmessage = handleWorkerMessage;
         } else {
