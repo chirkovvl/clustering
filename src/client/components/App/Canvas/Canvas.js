@@ -35,17 +35,15 @@ function handleWorkerMessage(e) {
 }
 
 function initWebGL(canvas) {
-    let [width, height] = Canvas.getSize();
+    let canvasSize = Canvas.getSize();
 
-    initCanvasWidth = width;
-    initCanvasHeight = height;
+    [initCanvasWidth, initCanvasHeight] = canvasSize;
 
     worker.postMessage(
         {
             type: "init",
             canvas,
-            width,
-            height,
+            size: canvasSize,
         },
         [canvas]
     );
@@ -59,6 +57,10 @@ function resizeCanvas() {
 }
 
 function setPoints(points, color, radius) {
+    let canvasSize = Canvas.getSize();
+
+    [initCanvasWidth, initCanvasHeight] = canvasSize;
+
     worker.postMessage({
         type: "points",
         pointsData: [
@@ -68,6 +70,7 @@ function setPoints(points, color, radius) {
                 radius,
             },
         ],
+        size: canvasSize,
     });
 }
 

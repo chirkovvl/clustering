@@ -31,8 +31,8 @@ onmessage = (e) => {
 };
 
 async function initWebGL(data) {
-    let { width, height } = data;
     canvas = data.canvas;
+    let size = data.size;
 
     gl =
         canvas.getContext("webgl", {
@@ -49,8 +49,8 @@ async function initWebGL(data) {
     ]);
 
     if (shaders) {
-        matrixProjection = getProjectionMatrix(width, height);
-        resizeCanvasToDisplaySize({ size: [width, height] });
+        matrixProjection = getProjectionMatrix(...size);
+        resizeCanvasToDisplaySize({ size });
         startWebGL(...shaders);
     }
 }
@@ -142,8 +142,10 @@ function updateArrayBuffer() {
 }
 
 function setPoints(data) {
-    let { pointsData } = data;
+    let { pointsData, size } = data;
     let transformedArray = [];
+
+    if (size) matrixProjection = getProjectionMatrix(...size);
 
     for (let { points, color, radius } of pointsData) {
         if (points.length) {
