@@ -126,7 +126,15 @@ export default function Canvas(props) {
     }, [points]);
 
     useEffect(() => {
-        setClusteringData(clustersStates);
+        if (clustersStates.length) {
+            setClusteringData(clustersStates);
+
+            let lastState = clustersStates[clustersStates.length - 1];
+            points = Object.values(lastState).reduce(
+                (arr, cluster) => arr.concat(cluster.points),
+                []
+            );
+        }
     }, [clustersStates]);
 
     const handleClick = (e) => {

@@ -192,9 +192,10 @@ function setClustersStates(data) {
         let animClustering = () => {
             let state = Object.values(states[idState]);
             pointsData = [];
+            clustersData = [];
 
             for (let cluster of state) {
-                pointsData.push({
+                clustersData.push({
                     points: [{ x: cluster.x, y: cluster.y }],
                     color: cluster.color,
                     radius: 10,
@@ -206,7 +207,10 @@ function setClustersStates(data) {
                 });
             }
 
+            pointsData = pointsData.concat(clustersData);
+
             setPoints({ pointsData });
+
             idState++;
 
             let idAnimation = requestAnimationFrame(animClustering);
