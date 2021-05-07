@@ -74,10 +74,11 @@ function setPoints(points, color, radius) {
     });
 }
 
-function setCentersGravity(centers) {
+function setCenterGravity(index, center) {
     worker.postMessage({
-        type: "centers",
-        centers,
+        type: "center",
+        index,
+        center,
     });
 }
 
@@ -94,14 +95,14 @@ export default function Canvas(props) {
     let pointColor = props.pointDefaultColor;
     let pointRadius = props.pointRadius;
     let clustersStates = props.clusteringData;
-    let centersGravity = {};
+    let centersGravity = new Map();
 
     Canvas.getSize = () => {
         return [canvas.current.clientWidth, canvas.current.clientHeight];
     };
 
     Canvas.getCentersGravity = () => {
-        return Object.values(centersGravity);
+        return Array.from(centersGravity.values());
     };
 
     useEffect(() => {
@@ -133,14 +134,18 @@ export default function Canvas(props) {
 
         for (let i = points.length - 1; i >= 0; i--) {
             if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
-                if (!(i in centersGravity)) {
-                    centersGravity[i] = {
+                if (!centersGravity.has(i)) {
+                    let center = {
                         x: points[i].x,
                         y: points[i].y,
                         color: randomRGBColor(),
                         radius: pointRadius * 2,
                     };
-                    setCentersGravity(centersGravity);
+
+                    centersGravity.set(i, center);
+
+                    setCenterGravity(i, center);
+
                     return;
                 }
             }

@@ -15,7 +15,7 @@ let handlers = {
     init: initWebGL,
     size: resizeCanvasToDisplaySize,
     points: setPoints,
-    centers: setCentersGravity,
+    center: setCenterGravity,
     clusters: setClustersStates,
 };
 
@@ -172,16 +172,12 @@ function setPoints(data) {
     }
 }
 
-function setCentersGravity(data) {
-    let { centers } = data;
+function setCenterGravity(data) {
+    let { index, center } = data;
 
-    for (let idCenter in centers) {
-        let color = centers[idCenter].color;
-        let radius = centers[idCenter].radius;
-        let data = color.concat(radius);
+    let replaceData = center.color.concat(center.radius);
 
-        vertexArray.splice(idCenter * 6 + 2, 4, ...data);
-    }
+    vertexArray.splice(index * 6 + 2, 4, ...replaceData);
 
     if (gl && program) {
         updateArrayBuffer();
@@ -211,7 +207,6 @@ function setClustersStates(data) {
             }
 
             setPoints({ pointsData });
-
             idState++;
 
             let idAnimation = requestAnimationFrame(animClustering);
