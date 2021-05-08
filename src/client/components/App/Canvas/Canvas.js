@@ -95,14 +95,10 @@ export default function Canvas(props) {
     let pointColor = props.pointDefaultColor;
     let pointRadius = props.pointRadius;
     let clustersStates = props.clusteringData;
-    let centersGravity = new Map();
+    let centersGravity = props.centersGravity;
 
     Canvas.getSize = () => {
         return [canvas.current.clientWidth, canvas.current.clientHeight];
-    };
-
-    Canvas.getCentersGravity = () => {
-        return Array.from(centersGravity.values());
     };
 
     useEffect(() => {
@@ -129,11 +125,24 @@ export default function Canvas(props) {
         if (clustersStates.length) {
             setClusteringData(clustersStates);
 
-            let lastState = clustersStates[clustersStates.length - 1];
-            points = Object.values(lastState).reduce(
+            let stateValues = Object.values(
+                clustersStates[clustersStates.length - 1]
+            );
+
+            points = stateValues.reduce(
                 (arr, cluster) => arr.concat(cluster.points),
                 []
             );
+
+            centersGravity.clear();
+            stateValues.forEach((cluster) => {
+                centersGravity.set(`${cluster.x}:${cluster.y}`, {
+                    x: cluster.x,
+                    y: cluster.y,
+                    color: cluster.color,
+                    radius: 10,
+                });
+            });
         }
     }, [clustersStates]);
 
@@ -142,7 +151,9 @@ export default function Canvas(props) {
 
         for (let i = points.length - 1; i >= 0; i--) {
             if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
-                if (!centersGravity.has(i)) {
+                let coords = `${points[i].x}:${points[i].y}`;
+
+                if (!centersGravity.has(coords)) {
                     let center = {
                         x: points[i].x,
                         y: points[i].y,
@@ -150,7 +161,7 @@ export default function Canvas(props) {
                         radius: pointRadius * 2,
                     };
 
-                    centersGravity.set(i, center);
+                    centersGravity.set(coords, center);
 
                     setCenterGravity(i, center);
 

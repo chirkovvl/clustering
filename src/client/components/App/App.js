@@ -13,6 +13,7 @@ class App extends React.Component {
             pointDefaultColor: [0.5, 0.5, 0.5],
             clustersStates: [],
             maxNumberPoints: 10000,
+            centersGravity: new Map(),
         };
 
         this._fetchPoints = this._fetchPoints.bind(this);
@@ -30,13 +31,18 @@ class App extends React.Component {
         };
 
         this._apiRequest("/api/generate", data).then((points) => {
-            this.setState({ points: points });
+            this.state.centersGravity.clear();
+
+            this.setState({
+                points: points,
+            });
         });
     }
 
     _fetchClusteringData() {
         window.startTime = new Date();
-        let centersGravity = Canvas.getCentersGravity();
+
+        let centersGravity = Array.from(this.state.centersGravity.values());
 
         if (!centersGravity.length) {
             alert("Отсутствуют центры гравитации");
@@ -83,6 +89,7 @@ class App extends React.Component {
                     points={this.state.points}
                     pointRadius={this.state.pointRadius}
                     pointDefaultColor={this.state.pointDefaultColor}
+                    centersGravity={this.state.centersGravity}
                 />
             </div>
         );
