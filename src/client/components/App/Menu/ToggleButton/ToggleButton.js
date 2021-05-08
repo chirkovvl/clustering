@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
+import React, { useRef } from "react"
 
 function ToggleButton(props) {
-    const toggleButton = useRef(null);
+    const toggleButton = useRef(null)
 
     const clickHandler = () => {
-        toggleButton.current.classList.toggle("fa-angle-double-left");
-        toggleButton.current.classList.toggle("fa-angle-double-right");
+        toggleButton.current.classList.toggle("fa-angle-double-left")
+        toggleButton.current.classList.toggle("fa-angle-double-right")
 
-        props.onClick();
-    };
+        props.onClick()
+    }
 
     return (
         <i
@@ -16,7 +16,7 @@ function ToggleButton(props) {
             onClick={clickHandler}
             className="fa fa-angle-double-left toggle-button"
         ></i>
-    );
+    )
 }
 
-export default ToggleButton;
+export default ToggleButton

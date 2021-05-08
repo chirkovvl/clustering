@@ -1,43 +1,43 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react"
 
-let worker = null;
-let initCanvasWidth;
-let initCanvasHeight;
+let worker = null
+let initCanvasWidth
+let initCanvasHeight
 
 function randomRGBColor() {
     return Array(3)
         .fill()
-        .map(() => Number(Math.random().toFixed(2)));
+        .map(() => Number(Math.random().toFixed(2)))
 }
 
 function convertToCanvasSize(canvas, x, y) {
-    let rect = canvas.getBoundingClientRect();
+    let rect = canvas.getBoundingClientRect()
 
     return [
         ((x - rect.x) * initCanvasWidth) / canvas.width,
         ((y - rect.y) * initCanvasHeight) / canvas.height,
-    ];
+    ]
 }
 
 function distance(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 }
 
 function handleWorkerMessage(e) {
-    let type = e.data.type;
+    let type = e.data.type
 
     switch (type) {
         case "timer":
-            let finishTime = new Date() - window.startTime;
-            console.log(`Время затраченное на кластеризацию ms: ${finishTime}`);
-            break;
+            let finishTime = new Date() - window.startTime
+            console.log(`Время затраченное на кластеризацию ms: ${finishTime}`)
+            break
     }
 }
 
 function initWebGL(canvas) {
-    let canvasSize = Canvas.getSize();
+    let canvasSize = Canvas.getSize()
 
-    [initCanvasWidth, initCanvasHeight] = canvasSize;
+    ;[initCanvasWidth, initCanvasHeight] = canvasSize
 
     worker.postMessage(
         {
@@ -46,20 +46,20 @@ function initWebGL(canvas) {
             size: canvasSize,
         },
         [canvas]
-    );
+    )
 }
 
 function resizeCanvas() {
     worker.postMessage({
         type: "size",
         size: Canvas.getSize(),
-    });
+    })
 }
 
 function setPoints(points, color, radius) {
-    let canvasSize = Canvas.getSize();
+    let canvasSize = Canvas.getSize()
 
-    [initCanvasWidth, initCanvasHeight] = canvasSize;
+    ;[initCanvasWidth, initCanvasHeight] = canvasSize
 
     worker.postMessage({
         type: "points",
@@ -71,7 +71,7 @@ function setPoints(points, color, radius) {
             },
         ],
         size: canvasSize,
-    });
+    })
 }
 
 function setCenterGravity(index, center) {
@@ -79,79 +79,79 @@ function setCenterGravity(index, center) {
         type: "center",
         index,
         center,
-    });
+    })
 }
 
 function setClusteringData(states) {
     worker.postMessage({
         type: "clusters",
         states,
-    });
+    })
 }
 
 export default function Canvas(props) {
-    let canvas = useRef(null);
-    let points = props.points;
-    let pointColor = props.pointDefaultColor;
-    let pointRadius = props.pointRadius;
-    let clustersStates = props.clusteringData;
-    let centersGravity = props.centersGravity;
+    let canvas = useRef(null)
+    let points = props.points
+    let pointColor = props.pointDefaultColor
+    let pointRadius = props.pointRadius
+    let clustersStates = props.clusteringData
+    let centersGravity = props.centersGravity
 
     Canvas.getSize = () => {
-        return [canvas.current.clientWidth, canvas.current.clientHeight];
-    };
+        return [canvas.current.clientWidth, canvas.current.clientHeight]
+    }
 
     useEffect(() => {
         if (canvas.current.transferControlToOffscreen) {
-            let offScreenCanvas = canvas.current.transferControlToOffscreen();
+            let offScreenCanvas = canvas.current.transferControlToOffscreen()
 
-            worker = new Worker("/webgl/webgl.js");
+            worker = new Worker("/webgl/webgl.js")
 
-            initWebGL(offScreenCanvas);
+            initWebGL(offScreenCanvas)
 
-            worker.onmessage = handleWorkerMessage;
+            worker.onmessage = handleWorkerMessage
         } else {
-            alert("Ваш браузер не поддерживает offScreenCanvas");
+            alert("Ваш браузер не поддерживает offScreenCanvas")
         }
 
-        window.addEventListener("resize", resizeCanvas);
-    }, []);
+        window.addEventListener("resize", resizeCanvas)
+    }, [])
 
     useEffect(() => {
-        setPoints(points, pointColor, pointRadius);
-    }, [points]);
+        setPoints(points, pointColor, pointRadius)
+    }, [points])
 
     useEffect(() => {
         if (clustersStates.length) {
-            setClusteringData(clustersStates);
+            setClusteringData(clustersStates)
 
             let stateValues = Object.values(
                 clustersStates[clustersStates.length - 1]
-            );
+            )
 
             points = stateValues.reduce(
                 (arr, cluster) => arr.concat(cluster.points),
                 []
-            );
+            )
 
-            centersGravity.clear();
+            centersGravity.clear()
             stateValues.forEach((cluster) => {
                 centersGravity.set(`${cluster.x}:${cluster.y}`, {
                     x: cluster.x,
                     y: cluster.y,
                     color: cluster.color,
                     radius: 10,
-                });
-            });
+                })
+            })
         }
-    }, [clustersStates]);
+    }, [clustersStates])
 
     const handleClick = (e) => {
-        let [x, y] = convertToCanvasSize(canvas.current, e.clientX, e.clientY);
+        let [x, y] = convertToCanvasSize(canvas.current, e.clientX, e.clientY)
 
         for (let i = points.length - 1; i >= 0; i--) {
             if (distance(x, y, points[i].x, points[i].y) < pointRadius + 2) {
-                let coords = `${points[i].x}:${points[i].y}`;
+                let coords = `${points[i].x}:${points[i].y}`
 
                 if (!centersGravity.has(coords)) {
                     let center = {
@@ -159,17 +159,17 @@ export default function Canvas(props) {
                         y: points[i].y,
                         color: randomRGBColor(),
                         radius: pointRadius * 2,
-                    };
+                    }
 
-                    centersGravity.set(coords, center);
+                    centersGravity.set(coords, center)
 
-                    setCenterGravity(i, center);
+                    setCenterGravity(i, center)
 
-                    return;
+                    return
                 }
             }
         }
-    };
+    }
 
     return (
         <div className="content">
@@ -177,5 +177,5 @@ export default function Canvas(props) {
                 <p>Ваш баузер не поддерживает canvas</p>
             </canvas>
         </div>
-    );
+    )
 }

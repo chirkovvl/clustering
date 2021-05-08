@@ -1,32 +1,32 @@
-const fe = require("fast-equals");
+const fe = require("fast-equals")
 
 function clusteringData(points, clusters) {
-    let states = [];
+    let states = []
 
     while (true) {
-        let state = calcState(points, clusters);
+        let state = calcState(points, clusters)
 
         if (states.length) {
-            if (fe.deepEqual(state, states[states.length - 1])) break;
+            if (fe.deepEqual(state, states[states.length - 1])) break
         }
 
-        states.push(state);
-        let coords = calcClustersCoords(state);
-        setClustersCoords(clusters, coords);
+        states.push(state)
+        let coords = calcClustersCoords(state)
+        setClustersCoords(clusters, coords)
     }
 
-    return states;
+    return states
 }
 
 function calcState(points, clusters) {
-    let state = {};
+    let state = {}
 
     for (let point of points) {
         let distances = clusters.map((cluster) =>
             distanceBetween(point.x, point.y, cluster.x, cluster.y)
-        );
+        )
 
-        let index = indexCluster(distances);
+        let index = indexCluster(distances)
 
         if (state[index] === undefined) {
             state[index] = {
@@ -34,54 +34,54 @@ function calcState(points, clusters) {
                 y: clusters[index].y,
                 color: clusters[index].color,
                 points: [],
-            };
+            }
         }
 
-        state[index].points.push(point);
+        state[index].points.push(point)
     }
 
-    return state;
+    return state
 }
 
 function calcClustersCoords(state) {
-    let coords = {};
+    let coords = {}
 
     for (let cluster in state) {
         if (state.hasOwnProperty(cluster)) {
-            let points = state[cluster].points;
+            let points = state[cluster].points
             let [avgX, avgY] = points
                 .reduce(
                     ([sumX, sumY], item) => [sumX + item.x, sumY + item.y],
                     [0, 0]
                 )
-                .map((sum) => Math.floor(sum / points.length));
-            coords[cluster] = { x: avgX, y: avgY };
+                .map((sum) => Math.floor(sum / points.length))
+            coords[cluster] = { x: avgX, y: avgY }
         } else {
-            throw new Error(`Object state doesn't contain property ${cluster}`);
+            throw new Error(`Object state doesn't contain property ${cluster}`)
         }
     }
 
-    return coords;
+    return coords
 }
 
 function setClustersCoords(clusters, coords) {
     clusters.forEach((cluster, index) => {
-        cluster.x = coords[index].x;
-        cluster.y = coords[index].y;
-    });
+        cluster.x = coords[index].x
+        cluster.y = coords[index].y
+    })
 }
 
 function indexCluster(arr) {
     try {
-        let minDistance = Math.min.apply(null, arr);
-        return arr.indexOf(minDistance);
+        let minDistance = Math.min.apply(null, arr)
+        return arr.indexOf(minDistance)
     } catch {
-        throw new Error(`Failed to calculate the cluster index`);
+        throw new Error(`Failed to calculate the cluster index`)
     }
 }
 
 function distanceBetween(fromX, fromY, toX, toY) {
-    return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2);
+    return Math.sqrt((toX - fromX) ** 2 + (toY - fromY) ** 2)
 }
 
-module.exports = clusteringData;
+module.exports = clusteringData

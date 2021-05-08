@@ -1,10 +1,10 @@
-import React from "react";
+import React from "react"
 
 function InputNumber(props) {
-    let errorContent = null;
+    let errorContent = null
 
     if (props.errorContent) {
-        errorContent = <i className="danger">{props.errorContent}</i>;
+        errorContent = <i className="danger">{props.errorContent}</i>
     }
 
     return (
@@ -19,7 +19,7 @@ function InputNumber(props) {
             />
             {errorContent}
         </>
-    );
+    )
 }
 
-export default InputNumber;
+export default InputNumber

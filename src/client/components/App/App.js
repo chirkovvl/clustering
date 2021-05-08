@@ -1,11 +1,11 @@
-import React from "react";
-import Menu from "./Menu/Menu";
-import Canvas from "./Canvas/Canvas";
-import "./App.css";
+import React from "react"
+import Menu from "./Menu/Menu"
+import Canvas from "./Canvas/Canvas"
+import "./App.css"
 
 class App extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             points: [],
@@ -14,49 +14,49 @@ class App extends React.Component {
             clustersStates: [],
             maxNumberPoints: 10000,
             centersGravity: new Map(),
-        };
+        }
 
-        this._fetchPoints = this._fetchPoints.bind(this);
-        this._fetchClusteringData = this._fetchClusteringData.bind(this);
+        this._fetchPoints = this._fetchPoints.bind(this)
+        this._fetchClusteringData = this._fetchClusteringData.bind(this)
     }
 
     _fetchPoints(quantity) {
-        let [canvasWidth, canvasHeight] = Canvas.getSize();
+        let [canvasWidth, canvasHeight] = Canvas.getSize()
 
         const data = {
             width: canvasWidth,
             height: canvasHeight,
             radius: this.state.pointRadius,
             quantity: quantity,
-        };
+        }
 
         this._apiRequest("/api/generate", data).then((points) => {
-            this.state.centersGravity.clear();
+            this.state.centersGravity.clear()
 
             this.setState({
                 points: points,
-            });
-        });
+            })
+        })
     }
 
     _fetchClusteringData() {
-        window.startTime = new Date();
+        window.startTime = new Date()
 
-        let centersGravity = Array.from(this.state.centersGravity.values());
+        let centersGravity = Array.from(this.state.centersGravity.values())
 
         if (!centersGravity.length) {
-            alert("Отсутствуют центры гравитации");
-            return;
+            alert("Отсутствуют центры гравитации")
+            return
         }
 
         const data = {
             points: this.state.points,
             centersGravity,
-        };
+        }
 
         this._apiRequest("/api/clustering", data).then((clustersStates) => {
-            this.setState({ clustersStates });
-        });
+            this.setState({ clustersStates })
+        })
     }
 
     async _apiRequest(path, data = {}) {
@@ -66,13 +66,13 @@ class App extends React.Component {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
-        });
+        })
 
         if (response.ok) {
-            return await response.json();
+            return await response.json()
         } else {
-            alert("Проблемы с сервером");
-            throw new Error(await response.text());
+            alert("Проблемы с сервером")
+            throw new Error(await response.text())
         }
     }
 
@@ -92,8 +92,8 @@ class App extends React.Component {
                     centersGravity={this.state.centersGravity}
                 />
             </div>
-        );
+        )
     }
 }
 
-export default App;
+export default App
