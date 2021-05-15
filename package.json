@@ -1,16 +1,18 @@
 {
-    "name": "clusteringnode",
-    "version": "2.2.0",
+    "name": "clustering",
+    "version": "2.5.4",
     "description": "Simple clustering example ",
-    "main": "index.js",
     "scripts": {
         "start": "node ./src/server/server.js",
         "server": "nodemon ./src/server/server.js",
         "client": "webpack serve",
         "dev": "concurrently \"npm run server\" \"npm run client\""
     },
-    "author": "Vladimir Chirkov",
-    "license": "ISC",
+    "author": {
+        "name": "Vladimir Chirkov",
+        "email": "vladimirch1397@gmail.com"
+    },
+    "license": "MIT",
     "dependencies": {
         "express": "^4.17.1",
         "fast-equals": "^2.0.0",
