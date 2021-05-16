@@ -3,7 +3,7 @@
     "version": "2.5.4",
     "description": "Simple clustering example ",
     "scripts": {
-        "start": "node ./src/server/server.js",
+        "start": "npm run dev",
         "server": "nodemon ./src/server/server.js",
         "client": "webpack serve",
         "dev": "concurrently \"npm run server\" \"npm run client\""

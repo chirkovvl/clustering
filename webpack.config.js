@@ -1,9 +1,10 @@
-const path = require("path");
-const htmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const { HotModuleReplacementPlugin } = require("webpack");
-const api = "http://localhost:5000";
-const port = 3000;
+const path = require("path")
+const htmlWebpackPlugin = require("html-webpack-plugin")
+const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const { HotModuleReplacementPlugin } = require("webpack")
+const API = "http://localhost:5000"
+const PORT = 3000
+const HOST = "0.0.0.0"
 
 module.exports = {
     mode: "development",
@@ -53,12 +54,13 @@ module.exports = {
         open: true,
         compress: true,
         hot: true,
-        port: port,
+        port: PORT,
+        host: HOST,
         proxy: {
             "/api": {
-                target: api,
+                target: API,
                 pathRewrite: { "^/api": "" },
             },
         },
     },
-};
+}
