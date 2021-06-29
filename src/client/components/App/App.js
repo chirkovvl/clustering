@@ -23,14 +23,14 @@ class App extends React.Component {
     _fetchPoints(quantity) {
         let [canvasWidth, canvasHeight] = Canvas.getSize()
 
-        const data = {
+        const body = {
             width: canvasWidth,
             height: canvasHeight,
             radius: this.state.pointRadius,
             quantity: quantity,
         }
 
-        this._apiRequest("/api/generate", data).then((points) => {
+        this._apiRequest("/api/generate", "GET", body).then((points) => {
             this.state.centersGravity.clear()
 
             this.setState({
@@ -49,31 +49,58 @@ class App extends React.Component {
             return
         }
 
-        const data = {
+        const body = {
             points: this.state.points,
             centersGravity,
         }
 
-        this._apiRequest("/api/clustering", data).then((clustersStates) => {
-            this.setState({ clustersStates })
-        })
+        this._apiRequest("/api/clustering", "POST", body).then(
+            (clustersStates) => {
+                this.setState({ clustersStates })
+            }
+        )
     }
 
-    async _apiRequest(path, data = {}) {
-        const response = await fetch(path, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
+    async _apiRequest(path, method = "GET", body = null, headers = {}) {
+        const isCorrectPath = (path) => {
+            // matched with template. The best solution is make it thought new RegExp()
+            return true
+        }
 
-        if (response.ok) {
-            return await response.json()
-        } else {
-            alert("Проблемы с сервером")
+        const getQueryString = (obj) => {
+            let queryString = ""
+
+            for (let key in obj) {
+                queryString += `${key}=${
+                    obj.hasOwnProperty(key) ? obj[key] : null
+                }&`
+            }
+
+            return `?${queryString.slice(0, queryString.length - 1)}`
+        }
+
+        if (!isCorrectPath(path)) {
+            throw new Error(`Uncorrect path to resource: ${path}`)
+        }
+
+        switch (method) {
+            case "GET":
+                path = `${path}${getQueryString(body)}`
+                body = null
+                break
+            case "POST":
+                body = JSON.stringify(body)
+                headers["Content-Type"] = "application/json"
+                break
+        }
+
+        const response = await fetch(path, { method, headers, body })
+
+        if (!response) {
             throw new Error(await response.text())
         }
+
+        return await response.json()
     }
 
     render() {

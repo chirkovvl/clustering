@@ -7,8 +7,10 @@ const app = express()
 
 app.use(express.json({ limit: "50mb" }))
 
-app.post("/generate", (req, res) => {
-    const { width, height, radius, quantity } = req.body
+// TODO Make validation of query params
+
+app.get("/generate", (req, res) => {
+    const { width, height, radius, quantity } = req.query
     let result = generatePoints(width, height, radius, quantity)
     res.json(result)
 })
@@ -16,7 +18,8 @@ app.post("/generate", (req, res) => {
 app.post("/clustering", (req, res) => {
     let { points, centersGravity } = req.body
     let result = clusteringPoint(points, centersGravity)
-    res.json(result.reverse().slice(0, 1))
+
+    res.json(result) // res.json(result.reverse().slice(0, 1))
 })
 
 app.listen(port, () => console.info(`Server started on ${host}:${port}`))
