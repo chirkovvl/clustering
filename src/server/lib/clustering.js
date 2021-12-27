@@ -1,4 +1,4 @@
-const fe = require("fast-equals")
+const util = require('util')
 
 function clusteringData(points, clusters) {
     let states = []
@@ -7,7 +7,7 @@ function clusteringData(points, clusters) {
         let state = calcState(points, clusters)
 
         if (states.length) {
-            if (fe.deepEqual(state, states[states.length - 1])) break
+            if (util.isDeepStrictEqual(state, states[states.length - 1])) break
         }
 
         states.push(state)

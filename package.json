@@ -1,6 +1,6 @@
 {
     "name": "clustering",
-    "version": "2.5.4",
+    "version": "2.5.5",
     "description": "Simple clustering example ",
     "scripts": {
         "start": "npm run dev",
@@ -15,7 +15,6 @@
     "license": "MIT",
     "dependencies": {
         "express": "^4.17.1",
-        "fast-equals": "^2.0.0",
         "react": "^17.0.1",
         "react-dom": "^17.0.1"
     },
