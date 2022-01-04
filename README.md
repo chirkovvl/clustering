@@ -1,4 +1,4 @@
-# clustering
+# Clustering
 
 A simple web application demonstrating clustering points
 
