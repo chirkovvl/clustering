@@ -1,6 +1,6 @@
 # Clustering
 
-A simple web application demonstrating clustering points
+A simple web application demonstrating clustering points by k-mean method 
 
 ![Иллюстрация к проекту](https://github.com/Vladimirch1397/clustering/raw/master/screenshots/screenshot.png)
 
